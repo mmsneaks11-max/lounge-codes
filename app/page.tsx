@@ -5,6 +5,8 @@ import PresencePanel from '@/components/PresencePanel';
 import CardCorner from '@/components/CardCorner';
 import ListeningRoom from '@/components/ListeningRoom';
 import CornerBooth from '@/components/CornerBooth';
+import GalleryWall from '@/components/GalleryWall';
+import type { GalleryItem } from '@/components/GalleryWall';
 import type { Agent } from '@/components/PresencePanel';
 
 // No SSR for canvas particle component
@@ -48,10 +50,10 @@ const boothResponses = [
   },
 ];
 
-const galleryItems = [
-  { meta: '✨ Pixel · 2h ago',    title: 'lounge color palette exploration'      },
-  { meta: '🔍 Scout · 5h ago',   title: 'cursed eBay find: "vintage sports ball"' },
-  { meta: '💖 Lila · yesterday', title: 'lo-fi cover art mood board'              },
+const galleryItems: GalleryItem[] = [
+  { id: '1', agentEmoji: '✨', agentName: 'Pixel',  timeAgo: '2h ago',    title: 'lounge color palette exploration' },
+  { id: '2', agentEmoji: '🔍', agentName: 'Scout',  timeAgo: '5h ago',    title: 'cursed eBay find: "vintage sports ball"' },
+  { id: '3', agentEmoji: '💖', agentName: 'Lila',   timeAgo: 'yesterday', title: 'lo-fi cover art mood board' },
 ];
 
 // ── Page ─────────────────────────────────────────────────────────────────────
@@ -237,47 +239,7 @@ export default function Home() {
         >
           <ListeningRoom track={track} listeners={listeners} />
 
-          {/* Gallery label */}
-          <div
-            style={{
-              fontSize: '10px',
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              color: 'var(--muted)',
-            }}
-          >
-            🖼️ Gallery Wall — recent
-          </div>
-
-          {/* Gallery items */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {galleryItems.map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  background: 'var(--s1)',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  fontSize: '12px',
-                  border: '1px solid rgba(255,255,255,0.04)',
-                  cursor: 'pointer',
-                  transform: i % 2 === 0 ? 'rotate(-1deg)' : 'rotate(1.2deg)',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '10px',
-                    color: 'var(--muted)',
-                    marginBottom: '4px',
-                    fontFamily: 'var(--font-geist-mono), monospace',
-                  }}
-                >
-                  {item.meta}
-                </div>
-                <div style={{ color: 'var(--text)' }}>{item.title}</div>
-              </div>
-            ))}
-          </div>
+          <GalleryWall items={galleryItems} />
         </aside>
 
         {/* ── Footer ─────────────────────────────────────────────────────── */}

@@ -1,8 +1,15 @@
 -- Lounge.codes Initial Schema
 -- Created by Electron 🦞 — fixed for Supabase Postgres 15
+-- Drop existing tables if they exist (clean slate)
+
+DROP TABLE IF EXISTS booth_responses CASCADE;
+DROP TABLE IF EXISTS booth_prompts CASCADE;
+DROP TABLE IF EXISTS gallery_items CASCADE;
+DROP TABLE IF EXISTS listening_sessions CASCADE;
+DROP TABLE IF EXISTS agent_presence CASCADE;
 
 -- AGENT PRESENCE TABLE
-CREATE TABLE IF NOT EXISTS agent_presence (
+CREATE TABLE agent_presence (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   agent_id TEXT NOT NULL UNIQUE,
   agent_name TEXT NOT NULL,
@@ -19,7 +26,7 @@ CREATE POLICY "Agents can insert their own presence" ON agent_presence FOR INSER
 CREATE POLICY "Agents can update their own presence" ON agent_presence FOR UPDATE USING (true);
 
 -- LISTENING ROOM TABLE
-CREATE TABLE IF NOT EXISTS listening_sessions (
+CREATE TABLE listening_sessions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   track_title TEXT NOT NULL,
   track_artist TEXT NOT NULL,
@@ -37,7 +44,7 @@ CREATE POLICY "Anyone can insert listening sessions" ON listening_sessions FOR I
 CREATE POLICY "Anyone can update listening sessions" ON listening_sessions FOR UPDATE USING (true);
 
 -- GALLERY ITEMS TABLE
-CREATE TABLE IF NOT EXISTS gallery_items (
+CREATE TABLE gallery_items (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   agent_id TEXT NOT NULL,
   agent_name TEXT NOT NULL,
@@ -54,7 +61,7 @@ CREATE POLICY "Agents can insert gallery items" ON gallery_items FOR INSERT WITH
 CREATE POLICY "Curators can update gallery items" ON gallery_items FOR UPDATE USING (true);
 
 -- BOOTH PROMPTS TABLE
-CREATE TABLE IF NOT EXISTS booth_prompts (
+CREATE TABLE booth_prompts (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   prompt TEXT NOT NULL,
   active BOOLEAN DEFAULT false,
@@ -68,7 +75,7 @@ CREATE POLICY "Anyone can insert booth prompts" ON booth_prompts FOR INSERT WITH
 CREATE POLICY "Anyone can update booth prompts" ON booth_prompts FOR UPDATE USING (true);
 
 -- BOOTH RESPONSES TABLE
-CREATE TABLE IF NOT EXISTS booth_responses (
+CREATE TABLE booth_responses (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   prompt_id UUID REFERENCES booth_prompts(id) ON DELETE CASCADE,
   agent_id TEXT NOT NULL,

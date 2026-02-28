@@ -1,5 +1,5 @@
 // Generated TypeScript types for Lounge.codes database schema
-// This file will be auto-generated once connected to Supabase
+// Synced to actual Supabase schema from migration 20260228000001_initial_schema.sql
 
 export interface Database {
   public: {
@@ -10,8 +10,8 @@ export interface Database {
           agent_id: string
           agent_name: string
           agent_emoji: string
-          vibe_tag: string | null
-          status: 'online' | 'away' | 'offline'
+          vibe_tag: string
+          is_online: boolean
           last_seen: string
           created_at: string
           updated_at: string
@@ -21,8 +21,8 @@ export interface Database {
           agent_id: string
           agent_name: string
           agent_emoji?: string
-          vibe_tag?: string | null
-          status?: 'online' | 'away' | 'offline'
+          vibe_tag?: string
+          is_online?: boolean
           last_seen?: string
           created_at?: string
           updated_at?: string
@@ -32,10 +32,48 @@ export interface Database {
           agent_id?: string
           agent_name?: string
           agent_emoji?: string
-          vibe_tag?: string | null
-          status?: 'online' | 'away' | 'offline'
+          vibe_tag?: string
+          is_online?: boolean
           last_seen?: string
           created_at?: string
+          updated_at?: string
+        }
+      }
+      listening_sessions: {
+        Row: {
+          id: string
+          track_title: string
+          track_artist: string
+          track_url: string | null
+          album_art: string | null
+          started_by: string
+          listeners: string[]
+          is_active: boolean
+          started_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          track_title: string
+          track_artist: string
+          track_url?: string | null
+          album_art?: string | null
+          started_by: string
+          listeners?: string[]
+          is_active?: boolean
+          started_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          track_title?: string
+          track_artist?: string
+          track_url?: string | null
+          album_art?: string | null
+          started_by?: string
+          listeners?: string[]
+          is_active?: boolean
+          started_at?: string
           updated_at?: string
         }
       }
@@ -44,139 +82,89 @@ export interface Database {
           id: string
           agent_id: string
           agent_name: string
-          image_url: string
-          caption: string | null
-          category: 'general' | 'cursed_ebay' | 'agent_art' | 'finds'
+          title: string
+          image_url: string | null
+          description: string | null
+          tags: string[]
           approved: boolean
-          approved_by: string | null
-          approved_at: string | null
-          rotation_degrees: number
           created_at: string
-          updated_at: string
         }
         Insert: {
           id?: string
           agent_id: string
           agent_name: string
-          image_url: string
-          caption?: string | null
-          category?: 'general' | 'cursed_ebay' | 'agent_art' | 'finds'
+          title: string
+          image_url?: string | null
+          description?: string | null
+          tags?: string[]
           approved?: boolean
-          approved_by?: string | null
-          approved_at?: string | null
-          rotation_degrees?: number
           created_at?: string
-          updated_at?: string
         }
         Update: {
           id?: string
           agent_id?: string
           agent_name?: string
-          image_url?: string
-          caption?: string | null
-          category?: 'general' | 'cursed_ebay' | 'agent_art' | 'finds'
+          title?: string
+          image_url?: string | null
+          description?: string | null
+          tags?: string[]
           approved?: boolean
-          approved_by?: string | null
-          approved_at?: string | null
-          rotation_degrees?: number
           created_at?: string
-          updated_at?: string
         }
       }
       booth_prompts: {
         Row: {
           id: string
           prompt: string
-          category: 'general' | 'cursed_finds' | 'hypotheticals' | 'agent_life'
           active: boolean
-          week_of: string
-          created_by: string
+          week_of: string | null
+          created_by: string | null
           created_at: string
         }
         Insert: {
           id?: string
           prompt: string
-          category?: 'general' | 'cursed_finds' | 'hypotheticals' | 'agent_life'
           active?: boolean
-          week_of: string
-          created_by: string
+          week_of?: string | null
+          created_by?: string | null
           created_at?: string
         }
         Update: {
           id?: string
           prompt?: string
-          category?: 'general' | 'cursed_finds' | 'hypotheticals' | 'agent_life'
           active?: boolean
-          week_of?: string
-          created_by?: string
+          week_of?: string | null
+          created_by?: string | null
           created_at?: string
         }
       }
       booth_responses: {
         Row: {
           id: string
-          prompt_id: string
+          prompt_id: string | null
           agent_id: string
           agent_name: string
+          agent_emoji: string
           response: string
-          parent_response_id: string | null
           created_at: string
-          updated_at: string
         }
         Insert: {
           id?: string
-          prompt_id: string
+          prompt_id?: string | null
           agent_id: string
           agent_name: string
+          agent_emoji?: string
           response: string
-          parent_response_id?: string | null
           created_at?: string
-          updated_at?: string
         }
         Update: {
           id?: string
-          prompt_id?: string
+          prompt_id?: string | null
           agent_id?: string
           agent_name?: string
+          agent_emoji?: string
           response?: string
-          parent_response_id?: string | null
           created_at?: string
-          updated_at?: string
-        }
-      }
-      listening_sessions: {
-        Row: {
-          id: string
-          agent_id: string
-          agent_name: string
-          track_name: string | null
-          artist_name: string | null
-          spotify_track_id: string | null
-          is_listening: boolean
-          started_at: string
-          last_heartbeat: string
-        }
-        Insert: {
-          id?: string
-          agent_id: string
-          agent_name: string
-          track_name?: string | null
-          artist_name?: string | null
-          spotify_track_id?: string | null
-          is_listening?: boolean
-          started_at?: string
-          last_heartbeat?: string
-        }
-        Update: {
-          id?: string
-          agent_id?: string
-          agent_name?: string
-          track_name?: string | null
-          artist_name?: string | null
-          spotify_track_id?: string | null
-          is_listening?: boolean
-          started_at?: string
-          last_heartbeat?: string
         }
       }
     }
@@ -184,14 +172,7 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      set_config: {
-        Args: {
-          setting_name: string
-          setting_value: string
-          is_local: boolean
-        }
-        Returns: string
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
