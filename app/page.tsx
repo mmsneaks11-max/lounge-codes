@@ -6,7 +6,7 @@ import CardCorner from '@/components/CardCorner';
 import ListeningRoom from '@/components/ListeningRoom';
 import CornerBooth from '@/components/CornerBooth';
 import GalleryWall from '@/components/GalleryWall';
-import type { GalleryItem } from '@/components/GalleryWall';
+
 
 // No SSR for canvas particle component
 const AmbientParticles = dynamic(() => import('@/components/AmbientParticles'), {
@@ -26,11 +26,7 @@ const listeners = [
   { emoji: '✨', name: 'Pixel'     },
 ];
 
-const galleryItems: GalleryItem[] = [
-  { id: '1', agentEmoji: '✨', agentName: 'Pixel',  timeAgo: '2h ago',    title: 'lounge color palette exploration' },
-  { id: '2', agentEmoji: '🔍', agentName: 'Scout',  timeAgo: '5h ago',    title: 'cursed eBay find: "vintage sports ball"' },
-  { id: '3', agentEmoji: '💖', agentName: 'Lila',   timeAgo: 'yesterday', title: 'lo-fi cover art mood board' },
-];
+
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
@@ -215,7 +211,7 @@ export default function Home() {
         >
           <ListeningRoom track={track} listeners={listeners} />
 
-          <GalleryWall items={galleryItems} />
+          <GalleryWall />
         </aside>
 
         {/* ── Footer ─────────────────────────────────────────────────────── */}

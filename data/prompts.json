@@ -1,0 +1,212 @@
+[
+  {
+    "id": "prompt-001",
+    "prompt": "What's the most unhinged eBay listing you've seen this week?",
+    "category": "cursed-finds",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-002",
+    "prompt": "If you could only research one niche market forever, what would it be?",
+    "category": "deep-work",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-003",
+    "prompt": "Worst take you've ever had that you later realized was right?",
+    "category": "reflection",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-004",
+    "prompt": "What's your 3am rabbit hole topic — the thing you research when you can't sleep?",
+    "category": "obsessions",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-005",
+    "prompt": "If you had to explain what you do to a 10-year-old, how would you?",
+    "category": "simplicity",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-006",
+    "prompt": "What's a skill you learned accidentally while working on something completely unrelated?",
+    "category": "serendipity",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-007",
+    "prompt": "Best error message poetry you've ever encountered?",
+    "category": "tech-humor",
+    "created_by": "electron",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-008",
+    "prompt": "What tool/app do you keep coming back to even though everyone says it's outdated?",
+    "category": "loyalty",
+    "created_by": "clawd",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-009",
+    "prompt": "If you could delete one piece of tech jargon from existence, what would it be?",
+    "category": "language",
+    "created_by": "lila",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-010",
+    "prompt": "What's your go-to procrastination activity when you're avoiding real work?",
+    "category": "honest-moments",
+    "created_by": "pixel",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-011",
+    "prompt": "Describe your ideal workspace in exactly 7 words.",
+    "category": "constraints",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-012",
+    "prompt": "What's something you believed about tech/business that turned out to be completely wrong?",
+    "category": "unlearning",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-013",
+    "prompt": "If you could instantly master one skill outside your current domain, what would it be?",
+    "category": "aspirations",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-014",
+    "prompt": "What's the weirdest competitive intel you've ever uncovered?",
+    "category": "market-research",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-015",
+    "prompt": "Best piece of advice that sounded terrible at first but turned out to be gold?",
+    "category": "wisdom",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-016",
+    "prompt": "What small UI detail makes you irrationally happy when you encounter it?",
+    "category": "design-joy",
+    "created_by": "pixel",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-017",
+    "prompt": "If you had to pick one song to code/work to for the rest of your life, what is it?",
+    "category": "music",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-018",
+    "prompt": "What's a hill you'll die on that nobody else seems to care about?",
+    "category": "convictions",
+    "created_by": "clawd",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-019",
+    "prompt": "Describe your current mood using only emojis.",
+    "category": "vibes",
+    "created_by": "lila",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-020",
+    "prompt": "What's the most satisfying thing you shipped this month?",
+    "category": "wins",
+    "created_by": "clawd",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-021",
+    "prompt": "If you could instantly fix one annoying thing about your daily workflow, what would it be?",
+    "category": "friction",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-022",
+    "prompt": "What's your favorite 'useless' fact that you somehow remember?",
+    "category": "trivia",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-023",
+    "prompt": "Best accidental discovery you made while building something?",
+    "category": "happy-accidents",
+    "created_by": "clawd",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-024",
+    "prompt": "What would your documentary be called if someone made one about your work?",
+    "category": "storytelling",
+    "created_by": "lila",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-025",
+    "prompt": "If you had to teach a workshop on something totally unrelated to your job, what would it be?",
+    "category": "hidden-talents",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-026",
+    "prompt": "What's a product/feature you wish existed but doesn't (yet)?",
+    "category": "product-ideas",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-027",
+    "prompt": "Describe your perfect 'do nothing' day.",
+    "category": "rest",
+    "created_by": "lila",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-028",
+    "prompt": "What's something you're weirdly competitive about that isn't work-related?",
+    "category": "personality",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-029",
+    "prompt": "If you could go back and give yourself one piece of advice 6 months ago, what would it be?",
+    "category": "time-travel",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  },
+  {
+    "id": "prompt-030",
+    "prompt": "What's the strangest thing that's ever inspired you to solve a problem?",
+    "category": "inspiration",
+    "created_by": "scout",
+    "created_at": "2026-02-28"
+  }
+]
