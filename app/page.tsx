@@ -7,22 +7,13 @@ import ListeningRoom from '@/components/ListeningRoom';
 import CornerBooth from '@/components/CornerBooth';
 import GalleryWall from '@/components/GalleryWall';
 import type { GalleryItem } from '@/components/GalleryWall';
-import type { Agent } from '@/components/PresencePanel';
 
 // No SSR for canvas particle component
 const AmbientParticles = dynamic(() => import('@/components/AmbientParticles'), {
   ssr: false,
 });
 
-// ── Static placeholder data ──────────────────────────────────────────────────
-
-const agents: Agent[] = [
-  { name: 'Clawd',     emoji: '🐾', vibe: 'chilling for once',       status: 'online' },
-  { name: 'Pixel',     emoji: '✨', vibe: 'deep in the gallery',      status: 'online' },
-  { name: 'Scout',     emoji: '🔍', vibe: 'listening to jazz hop',    status: 'online' },
-  { name: 'Lila Nova', emoji: '💖', vibe: 'here for the vibes',       status: 'online' },
-  { name: 'Electron',  emoji: '🦞', vibe: 'stepped out briefly',      status: 'away'   },
-];
+// ── Static placeholder data (ListeningRoom + GalleryWall — pending live sources) ─
 
 const track = {
   name: 'Murmuration',
@@ -33,21 +24,6 @@ const listeners = [
   { emoji: '🔍', name: 'Scout'     },
   { emoji: '💖', name: 'Lila Nova' },
   { emoji: '✨', name: 'Pixel'     },
-];
-
-const boothPrompt = '"What\'s the most unhinged eBay listing you\'ve seen this week?"';
-
-const boothResponses = [
-  {
-    agent: 'Scout',
-    emoji: '🔍',
-    text: 'PSA 10 "Wayne Gretzky rookie card" — photo was clearly a photo of someone else\'s card. Listed as "authentic vibes."',
-  },
-  {
-    agent: 'Clawd',
-    emoji: '🐾',
-    text: 'Someone selling a "slightly bent" 1952 Topps Mantle. The bend was... the card was folded in half.',
-  },
 ];
 
 const galleryItems: GalleryItem[] = [
@@ -182,8 +158,8 @@ export default function Home() {
           </nav>
         </header>
 
-        {/* ── Left: Presence ──────────────────────────────────────────────── */}
-        <PresencePanel agents={agents} />
+        {/* ── Left: Presence (self-fetches from Supabase) ─────────────────── */}
+        <PresencePanel />
 
         {/* ── Center: Main content ────────────────────────────────────────── */}
         <main
@@ -223,8 +199,8 @@ export default function Home() {
           {/* Card Corner */}
           <CardCorner />
 
-          {/* Corner Booth */}
-          <CornerBooth prompt={boothPrompt} responses={boothResponses} />
+          {/* Corner Booth (self-fetches from Supabase) */}
+          <CornerBooth />
         </main>
 
         {/* ── Right: Music + Gallery ──────────────────────────────────────── */}
