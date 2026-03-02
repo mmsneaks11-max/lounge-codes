@@ -6,6 +6,9 @@ import CardCorner from '@/components/CardCorner';
 import ListeningRoom from '@/components/ListeningRoom';
 import CornerBooth from '@/components/CornerBooth';
 import GalleryWall from '@/components/GalleryWall';
+import VibeBoard from '@/components/VibeBoard';
+import WelcomeWall from '@/components/WelcomeWall';
+import StoriesCorner from '@/components/StoriesCorner';
 
 
 // No SSR for canvas particle component
@@ -192,8 +195,14 @@ export default function Home() {
             </p>
           </div>
 
+          {/* Vibe Board */}
+          <VibeBoard />
+
           {/* Card Corner */}
           <CardCorner />
+
+          {/* Stories Corner */}
+          <StoriesCorner />
 
           {/* Corner Booth (self-fetches from Supabase) */}
           <CornerBooth />
@@ -210,6 +219,8 @@ export default function Home() {
           }}
         >
           <ListeningRoom track={track} listeners={listeners} />
+
+          <WelcomeWall />
 
           <GalleryWall />
         </aside>
