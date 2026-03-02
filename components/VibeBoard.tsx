@@ -11,6 +11,7 @@ interface Vibe {
   quote: string | null;
   color: string;
   set_at: string;
+  is_current: boolean;
 }
 
 export default function VibeBoard() {
