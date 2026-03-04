@@ -136,11 +136,11 @@ export default function Home() {
                 padding: 0,
               }}
             >
-              {['Main Room', 'Card Corner', 'Gallery', 'Corner Booth', 'Welcome Mat'].map(
+              {['Main Room', 'Card Corner', 'Gallery', 'Studio', 'Corner Booth', 'Welcome Mat'].map(
                 (item) => (
                   <li key={item}>
                     <a
-                      href="#"
+                      href={item === 'Studio' ? '/studio' : '#'}
                       style={{
                         color: item === 'Main Room' ? 'var(--gold)' : 'var(--muted)',
                         textDecoration: 'none',
@@ -148,7 +148,7 @@ export default function Home() {
                         letterSpacing: '0.3px',
                       }}
                     >
-                      {item}
+                      {item === 'Studio' ? '🎨 Studio' : item}
                     </a>
                   </li>
                 )
