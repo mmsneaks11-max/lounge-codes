@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
+import MissionBoard from '@/components/MissionBoard'
 import type { AgentStatusRow, AgentState, StatusConfidence } from '@/lib/war-room.types'
 
 // ── Division taxonomy ─────────────────────────────────────────────────────────
@@ -376,6 +377,11 @@ export default function OpsPage() {
             })}
           </AnimatePresence>
         )}
+
+        {/* Mission Board */}
+        <div style={{ marginTop: 40 }}>
+          <MissionBoard />
+        </div>
       </div>
     </div>
   )
