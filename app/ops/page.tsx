@@ -34,17 +34,18 @@ const AGENT_REGISTRY: Record<string, { emoji: string; division: Division; machin
   electron:    { emoji: '🦞', division: 'QA & Monitoring', machine: 'mac2' },
   perceptor:   { emoji: '🔬', division: 'QA & Monitoring', machine: 'mac2' },
   byte:        { emoji: '🔩', division: 'QA & Monitoring', machine: 'mac2' },
-  // Security & Recon (PC1)
-  'ser-magnus': { emoji: '🛡️', division: 'Security & Recon', machine: 'pc1' },
-  cleopatra:   { emoji: '👑', division: 'Security & Recon', machine: 'pc1' },
-  echo:        { emoji: '📜', division: 'Security & Recon', machine: 'pc1' },
+  // Security, Recon & Data (PC1)
+  'ser-magnus': { emoji: '🛡️', division: 'Security, Recon & Data', machine: 'pc1' },
+  cleopatra:   { emoji: '👑', division: 'Security, Recon & Data', machine: 'pc1' },
+  echo:        { emoji: '📜', division: 'Security, Recon & Data', machine: 'pc1' },
+  dayta:       { emoji: '🗄️', division: 'Security, Recon & Data', machine: 'pc1' },
 }
 
-type Division = 'Build & Ops' | 'Outward Facing' | 'Intel & Sales' | 'Product' | 'Finance & Legal' | 'QA & Monitoring' | 'Security & Recon'
+type Division = 'Build & Ops' | 'Outward Facing' | 'Intel & Sales' | 'Product' | 'Finance & Legal' | 'QA & Monitoring' | 'Security, Recon & Data'
 type Machine = 'mac1' | 'mac2' | 'pc1'
 type FilterMode = 'all' | Division
 
-const DIVISIONS: Division[] = ['Build & Ops', 'Outward Facing', 'Intel & Sales', 'Product', 'Finance & Legal', 'QA & Monitoring', 'Security & Recon']
+const DIVISIONS: Division[] = ['Build & Ops', 'Outward Facing', 'Intel & Sales', 'Product', 'Finance & Legal', 'QA & Monitoring', 'Security, Recon & Data']
 const DIVISION_COLOR: Record<Division, string> = {
   'Build & Ops':     '#f59e0b',
   'Outward Facing':  '#f472b6',
@@ -52,7 +53,7 @@ const DIVISION_COLOR: Record<Division, string> = {
   'Product':         '#60a5fa',
   'Finance & Legal': '#a78bfa',
   'QA & Monitoring': '#38bdf8',
-  'Security & Recon': '#ef4444',
+  'Security, Recon & Data': '#ef4444',
 }
 
 const STATE_DOT: Record<AgentState, { color: string; label: string; pulse: boolean }> = {
