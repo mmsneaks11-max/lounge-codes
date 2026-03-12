@@ -9,49 +9,49 @@ import type { AgentStatusRow, AgentState, StatusConfidence } from '@/lib/war-roo
 // Canonical map of all 21 agents → division + machine
 
 const AGENT_REGISTRY: Record<string, { emoji: string; division: Division; machine: Machine }> = {
-  // Leadership
-  clawd:       { emoji: '🐾', division: 'Leadership', machine: 'mac1' },
-  ozara:       { emoji: '💰', division: 'Leadership', machine: 'mac1' },
-  // Creative
-  pixel:       { emoji: '✨', division: 'Creative',   machine: 'mac1' },
-  // Outreach
-  'lila-nova': { emoji: '💖', division: 'Outreach',   machine: 'mac1' },
-  ripley:      { emoji: '👂', division: 'Outreach',   machine: 'mac1' },
-  cairo:       { emoji: '🪙', division: 'Outreach',   machine: 'mac1' },
-  june:        { emoji: '🌱', division: 'Outreach',   machine: 'mac1' },
-  // Research
-  scout:       { emoji: '🔍', division: 'Research',   machine: 'mac1' },
-  mint:        { emoji: '💰', division: 'Research',   machine: 'mac2' },
-  oracle:      { emoji: '🔮', division: 'Research',   machine: 'mac2' },
-  sage:        { emoji: '🌿', division: 'Research',   machine: 'mac1' },
-  indy:        { emoji: '🎒', division: 'Research',   machine: 'mac1' },
-  cleopatra:   { emoji: '👑', division: 'Research',   machine: 'mac1' },
-  echo:        { emoji: '📜', division: 'Research',   machine: 'pc1'  },
-  // Ops & QA
-  electron:    { emoji: '🦞', division: 'Ops & QA',  machine: 'mac2' },
-  perceptor:   { emoji: '🔬', division: 'Ops & QA',  machine: 'mac2' },
-  coach:       { emoji: '🏋️', division: 'Ops & QA',  machine: 'mac1' },
-  kay:         { emoji: '📎', division: 'Ops & QA',  machine: 'mac1' },
-  byte:        { emoji: '🔩', division: 'Ops & QA',  machine: 'mac2' },
-  // Infra
-  chip:        { emoji: '🐿️', division: 'Infra',     machine: 'mac1' },
-  // Security
-  'ser-magnus': { emoji: '🛡️', division: 'Security', machine: 'pc1'  },
+  // Build & Ops (Mac1)
+  clawd:       { emoji: '🐾', division: 'Build & Ops',     machine: 'mac1' },
+  chip:        { emoji: '🐿️', division: 'Build & Ops',     machine: 'mac1' },
+  // Outward Facing (Mac1)
+  'lila-nova': { emoji: '💖', division: 'Outward Facing',  machine: 'mac1' },
+  ripley:      { emoji: '👂', division: 'Outward Facing',  machine: 'mac1' },
+  cairo:       { emoji: '🪙', division: 'Outward Facing',  machine: 'mac1' },
+  june:        { emoji: '🌱', division: 'Outward Facing',  machine: 'mac1' },
+  pixel:       { emoji: '✨', division: 'Outward Facing',  machine: 'mac1' },
+  // Intel & Sales (Mac1)
+  scout:       { emoji: '🔍', division: 'Intel & Sales',   machine: 'mac1' },
+  mint:        { emoji: '💰', division: 'Intel & Sales',   machine: 'mac1' },
+  oracle:      { emoji: '🔮', division: 'Intel & Sales',   machine: 'mac1' },
+  coach:       { emoji: '🏋️', division: 'Intel & Sales',  machine: 'mac1' },
+  // Product (Mac1)
+  sage:        { emoji: '🌿', division: 'Product',         machine: 'mac1' },
+  indy:        { emoji: '🎒', division: 'Product',         machine: 'mac1' },
+  kay:         { emoji: '📎', division: 'Product',         machine: 'mac1' },
+  // Finance & Legal (Mac1)
+  ozara:       { emoji: '⚖️', division: 'Finance & Legal', machine: 'mac1' },
+  // QA & Monitoring (Mac2)
+  electron:    { emoji: '🦞', division: 'QA & Monitoring', machine: 'mac2' },
+  perceptor:   { emoji: '🔬', division: 'QA & Monitoring', machine: 'mac2' },
+  byte:        { emoji: '🔩', division: 'QA & Monitoring', machine: 'mac2' },
+  // Security & Recon (PC1)
+  'ser-magnus': { emoji: '🛡️', division: 'Security & Recon', machine: 'pc1' },
+  cleopatra:   { emoji: '👑', division: 'Security & Recon', machine: 'pc1' },
+  echo:        { emoji: '📜', division: 'Security & Recon', machine: 'pc1' },
 }
 
-type Division = 'Leadership' | 'Creative' | 'Outreach' | 'Ops & QA' | 'Infra' | 'Research' | 'Security'
+type Division = 'Build & Ops' | 'Outward Facing' | 'Intel & Sales' | 'Product' | 'Finance & Legal' | 'QA & Monitoring' | 'Security & Recon'
 type Machine = 'mac1' | 'mac2' | 'pc1'
 type FilterMode = 'all' | Division
 
-const DIVISIONS: Division[] = ['Leadership', 'Creative', 'Outreach', 'Ops & QA', 'Infra', 'Research', 'Security']
+const DIVISIONS: Division[] = ['Build & Ops', 'Outward Facing', 'Intel & Sales', 'Product', 'Finance & Legal', 'QA & Monitoring', 'Security & Recon']
 const DIVISION_COLOR: Record<Division, string> = {
-  Leadership: '#f59e0b',
-  Creative:   '#f472b6',
-  Outreach:   '#34d399',
-  'Ops & QA': '#60a5fa',
-  Infra:      '#a78bfa',
-  Research:   '#fb923c',
-  Security:   '#ef4444',
+  'Build & Ops':     '#f59e0b',
+  'Outward Facing':  '#f472b6',
+  'Intel & Sales':   '#34d399',
+  'Product':         '#60a5fa',
+  'Finance & Legal': '#a78bfa',
+  'QA & Monitoring': '#38bdf8',
+  'Security & Recon': '#ef4444',
 }
 
 const STATE_DOT: Record<AgentState, { color: string; label: string; pulse: boolean }> = {
