@@ -9,28 +9,34 @@ import type { AgentStatusRow, AgentState, StatusConfidence } from '@/lib/war-roo
 // Canonical map of all 21 agents → division + machine
 
 const AGENT_REGISTRY: Record<string, { emoji: string; division: Division; machine: Machine }> = {
-  clawd:     { emoji: '🐾', division: 'Leadership', machine: 'mac1' },
-  electron:  { emoji: '🦞', division: 'Ops & QA',   machine: 'mac2' },
-  perceptor: { emoji: '🔬', division: 'Ops & QA',   machine: 'mac2' },
-  'lila-nova': { emoji: '💖', division: 'Creative',  machine: 'mac1' },
-  pixel:     { emoji: '✨', division: 'Creative',    machine: 'mac1' },
-  scout:     { emoji: '🔍', division: 'Research',    machine: 'mac1' },
-  ripley:    { emoji: '👁',  division: 'Outreach',   machine: 'mac1' },
-  cairo:     { emoji: '🏛️', division: 'Outreach',   machine: 'mac1' },
-  june:      { emoji: '🌸', division: 'Outreach',   machine: 'mac1' },
-  chip:      { emoji: '🐿️', division: 'Infra',      machine: 'mac1' },
-  'ser-magnus': { emoji: '🛡️', division: 'Security', machine: 'pc1' },
-  spark:     { emoji: '⚡', division: 'Research',    machine: 'mac1' },
-  bolt:      { emoji: '🔩', division: 'Infra',       machine: 'mac2' },
-  byte:      { emoji: '💾', division: 'Infra',       machine: 'mac2' },
-  mint:      { emoji: '🌿', division: 'Research',    machine: 'mac2' },
-  oracle:    { emoji: '🔮', division: 'Research',    machine: 'mac2' },
-  sage:      { emoji: '📖', division: 'Research',    machine: 'mac1' },
-  indy:      { emoji: '🎯', division: 'Outreach',    machine: 'mac1' },
-  kay:       { emoji: '🎀', division: 'Creative',    machine: 'mac1' },
-  ozara:     { emoji: '🌊', division: 'Creative',    machine: 'mac1' },
-  coach:     { emoji: '🏋️', division: 'Ops & QA',   machine: 'mac1' },
-  echo:      { emoji: '📡', division: 'Infra',       machine: 'mac1' },
+  // Leadership
+  clawd:       { emoji: '🐾', division: 'Leadership', machine: 'mac1' },
+  ozara:       { emoji: '💰', division: 'Leadership', machine: 'mac1' },
+  // Creative
+  pixel:       { emoji: '✨', division: 'Creative',   machine: 'mac1' },
+  // Outreach
+  'lila-nova': { emoji: '💖', division: 'Outreach',   machine: 'mac1' },
+  ripley:      { emoji: '👂', division: 'Outreach',   machine: 'mac1' },
+  cairo:       { emoji: '🪙', division: 'Outreach',   machine: 'mac1' },
+  june:        { emoji: '🌱', division: 'Outreach',   machine: 'mac1' },
+  // Research
+  scout:       { emoji: '🔍', division: 'Research',   machine: 'mac1' },
+  mint:        { emoji: '💰', division: 'Research',   machine: 'mac2' },
+  oracle:      { emoji: '🔮', division: 'Research',   machine: 'mac2' },
+  sage:        { emoji: '🌿', division: 'Research',   machine: 'mac1' },
+  indy:        { emoji: '🎒', division: 'Research',   machine: 'mac1' },
+  cleopatra:   { emoji: '👑', division: 'Research',   machine: 'mac1' },
+  echo:        { emoji: '📜', division: 'Research',   machine: 'pc1'  },
+  // Ops & QA
+  electron:    { emoji: '🦞', division: 'Ops & QA',  machine: 'mac2' },
+  perceptor:   { emoji: '🔬', division: 'Ops & QA',  machine: 'mac2' },
+  coach:       { emoji: '🏋️', division: 'Ops & QA',  machine: 'mac1' },
+  kay:         { emoji: '📎', division: 'Ops & QA',  machine: 'mac1' },
+  byte:        { emoji: '🔩', division: 'Ops & QA',  machine: 'mac1' },
+  // Infra
+  chip:        { emoji: '🐿️', division: 'Infra',     machine: 'mac1' },
+  // Security
+  'ser-magnus': { emoji: '🛡️', division: 'Security', machine: 'pc1'  },
 }
 
 type Division = 'Leadership' | 'Creative' | 'Outreach' | 'Ops & QA' | 'Infra' | 'Research' | 'Security'
@@ -264,10 +270,13 @@ export default function OpsPage() {
 
   // Summary counts
   const totalAgents = Object.keys(AGENT_REGISTRY).length
-  const liveAgents = [...statusMap.values()].filter(
+  const activeAgents = [...statusMap.values()].filter(
     r => (r.state === 'active' || r.state === 'busy') && !r.is_stale
   ).length
-  const unknownAgents = Object.keys(AGENT_REGISTRY).filter(id => !statusMap.has(id)).length
+  const wiredAgents = [...statusMap.values()].filter(r => r.state !== 'unknown').length
+  const unwiredAgents = Object.keys(AGENT_REGISTRY).filter(
+    id => !statusMap.has(id) || statusMap.get(id)?.state === 'unknown'
+  ).length
 
   return (
     <div style={{
@@ -293,7 +302,7 @@ export default function OpsPage() {
               🐾 War Room
             </h1>
             <p style={{ margin: '4px 0 0', fontSize: 13, color: '#6b7280' }}>
-              {totalAgents} agents · {liveAgents} live · {unknownAgents} unwired
+              {totalAgents} agents · {activeAgents} active · {wiredAgents} wired · {unwiredAgents} unwired
             </p>
           </div>
 
