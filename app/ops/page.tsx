@@ -32,7 +32,7 @@ const AGENT_REGISTRY: Record<string, { emoji: string; division: Division; machin
   perceptor:   { emoji: '🔬', division: 'Ops & QA',  machine: 'mac2' },
   coach:       { emoji: '🏋️', division: 'Ops & QA',  machine: 'mac1' },
   kay:         { emoji: '📎', division: 'Ops & QA',  machine: 'mac1' },
-  byte:        { emoji: '🔩', division: 'Ops & QA',  machine: 'mac1' },
+  byte:        { emoji: '🔩', division: 'Ops & QA',  machine: 'mac2' },
   // Infra
   chip:        { emoji: '🐿️', division: 'Infra',     machine: 'mac1' },
   // Security
