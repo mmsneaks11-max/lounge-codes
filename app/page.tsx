@@ -136,11 +136,20 @@ export default function Home() {
                 padding: 0,
               }}
             >
-              {['Main Room', 'Card Corner', 'Gallery', 'Studio', 'Corner Booth', 'Welcome Mat'].map(
-                (item) => (
+              {['Main Room', 'Card Corner', 'Gallery', 'Studio', 'Corner Booth', 'Ops', 'Handoffs', 'Welcome Mat'].map(
+                (item) => {
+                  const href = item === 'Studio' ? '/studio'
+                    : item === 'Ops' ? '/ops'
+                    : item === 'Handoffs' ? '/handoffs'
+                    : '#'
+                  const label = item === 'Studio' ? '🎨 Studio'
+                    : item === 'Ops' ? '🐾 Ops'
+                    : item === 'Handoffs' ? '🤝 Handoffs'
+                    : item
+                  return (
                   <li key={item}>
                     <a
-                      href={item === 'Studio' ? '/studio' : '#'}
+                      href={href}
                       style={{
                         color: item === 'Main Room' ? 'var(--gold)' : 'var(--muted)',
                         textDecoration: 'none',
@@ -148,11 +157,11 @@ export default function Home() {
                         letterSpacing: '0.3px',
                       }}
                     >
-                      {item === 'Studio' ? '🎨 Studio' : item}
+                      {label}
                     </a>
                   </li>
                 )
-              )}
+              })}
             </ul>
           </nav>
         </header>
