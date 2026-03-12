@@ -36,6 +36,9 @@ export interface AgentStatusRow {
   last_success_at: string | null
   last_error_at: string | null
   last_error_summary: string | null
+  // Optional derived fields (not persisted on all rows)
+  observation_type?: string | null
+  failure_reason?: string | null
   is_stale: boolean
   confidence: StatusConfidence
   created_at: string

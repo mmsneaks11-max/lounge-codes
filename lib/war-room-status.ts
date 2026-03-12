@@ -32,7 +32,7 @@ export function deriveAgentStatus(row: AgentStatusRow, nowMs = Date.now()): Deri
   const isOffline = freshnessSeconds >= row.offline_after_seconds
   const isStale = freshnessSeconds >= row.stale_after_seconds || row.is_stale
 
-  const observationType = row.observation_type ?? inferObservationType(row)
+  const observationType = (row.observation_type as ObservationType | null) ?? inferObservationType(row)
 
   if (isOffline) {
     return {
@@ -41,7 +41,7 @@ export function deriveAgentStatus(row: AgentStatusRow, nowMs = Date.now()): Deri
       isStale: true,
       isOffline: true,
       freshnessSeconds,
-      failureReason: row.failure_reason ?? 'agent_stale',
+      failureReason: (row.failure_reason as FailureReason | null) ?? 'agent_stale',
       observationType,
     }
   }
@@ -53,7 +53,7 @@ export function deriveAgentStatus(row: AgentStatusRow, nowMs = Date.now()): Deri
       isStale: true,
       isOffline: false,
       freshnessSeconds,
-      failureReason: row.failure_reason ?? 'agent_stale',
+      failureReason: (row.failure_reason as FailureReason | null) ?? 'agent_stale',
       observationType,
     }
   }
@@ -64,7 +64,7 @@ export function deriveAgentStatus(row: AgentStatusRow, nowMs = Date.now()): Deri
     isStale: false,
     isOffline: false,
     freshnessSeconds,
-    failureReason: row.failure_reason ?? 'agent_healthy',
+    failureReason: (row.failure_reason as FailureReason | null) ?? 'agent_healthy',
     observationType,
   }
 }
