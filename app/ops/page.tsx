@@ -30,6 +30,7 @@ const AGENT_REGISTRY: Record<string, { emoji: string; division: Division; machin
   kay:       { emoji: '🎀', division: 'Creative',    machine: 'mac1' },
   ozara:     { emoji: '🌊', division: 'Creative',    machine: 'mac1' },
   coach:     { emoji: '🏋️', division: 'Ops & QA',   machine: 'mac1' },
+  echo:      { emoji: '📡', division: 'Infra',       machine: 'mac1' },
 }
 
 type Division = 'Leadership' | 'Creative' | 'Outreach' | 'Ops & QA' | 'Infra' | 'Research' | 'Security'
