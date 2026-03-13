@@ -24,6 +24,8 @@ export async function signInWithGoogle(redirectTo?: string) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
+      // Supabase handles the OAuth exchange at its own callback URL,
+      // then redirects to our app's callback page
       redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
       queryParams: {
         access_type: 'offline',

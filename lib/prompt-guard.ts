@@ -370,8 +370,8 @@ export function isManager(slug: string): boolean {
 // All lounge.codes inbound requests MUST use free models only.
 // Never burn paid tokens on external/public requests.
 
-export const LOUNGE_REQUEST_MODEL = 'mistral'; // free tier only
-export const LOUNGE_REQUEST_MODEL_FULL = 'mistral/mistral-small-latest';
+export const LOUNGE_REQUEST_MODEL = 'hunter'; // free tier only
+export const LOUNGE_REQUEST_MODEL_FULL = 'openrouter/hunter-alpha';
 
 // ── Full request guard (combines everything) ───────────────────────────────
 
