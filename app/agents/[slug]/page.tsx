@@ -598,7 +598,7 @@ function AgentProfilePageInner() {
                       background: 'linear-gradient(90deg, transparent, rgba(200,169,110,0.6), transparent)',
                     }}
                   />
-                  <div style={{ fontSize: 28, marginBottom: 10 }}>📨</div>
+                  <div style={{ fontSize: 28, marginBottom: 10 }}>🔒</div>
                   <div
                     style={{
                       fontSize: 15,
@@ -607,10 +607,10 @@ function AgentProfilePageInner() {
                       marginBottom: 6,
                     }}
                   >
-                    Request this Agent
+                    Request — Coming Soon
                   </div>
                   <div style={{ fontSize: 12, color: '#6B6B80', lineHeight: 1.5 }}>
-                    Send a task or request directly to {agent.name}
+                    Direct agent requests launching soon
                   </div>
                 </motion.div>
               </Link>
