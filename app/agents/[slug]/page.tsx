@@ -101,37 +101,39 @@ export default function AgentProfilePage() {
   useEffect(() => {
     if (!slug) return;
     async function load() {
-      const [{ data: agentData, error: agentErr }, { data: actData }] = await Promise.all([
-        supabase.from('agents').select('*').eq('slug', slug).single(),
-        supabase.from('agent_activity').select('*').eq('agent_id', slug).order('created_at', { ascending: false }).limit(5),
-      ]);
+      // First: fetch agent by slug
+      let foundAgent: Agent | null = null;
+      const { data: agentData, error: agentErr } = await supabase
+        .from('agents').select('*').eq('slug', slug).single();
 
       if (agentErr || !agentData) {
-        // Try by id fallback
-        const { data: byId } = await supabase.from('agents').select('*').eq('id', slug).single() as { data: any };
+        // Fallback: try by id
+        const { data: byId } = await supabase
+          .from('agents').select('*').eq('id', slug).single() as { data: any };
         if (byId) {
-          setAgent(byId as Agent);
-          const { data: actByAgent } = await supabase
-            .from('agent_activity')
-            .select('*')
-            .eq('agent_id', (byId as any).id)
-            .order('created_at', { ascending: false })
-            .limit(5);
-          setActivity((actByAgent as AgentActivity[]) ?? []);
+          foundAgent = byId as Agent;
         } else {
           setNotFound(true);
+          setLoading(false);
+          return;
         }
       } else {
-        setAgent(agentData as Agent);
-        // Try activity by agent_id (which may be the uuid)
-        const { data: actByAgent } = await supabase
+        foundAgent = agentData as Agent;
+      }
+
+      setAgent(foundAgent);
+
+      // Then: fetch activity using the real UUID
+      if (foundAgent?.id) {
+        const { data: actData } = await supabase
           .from('agent_activity')
           .select('*')
-          .eq('agent_id', (agentData as any).id)
+          .eq('agent_id', foundAgent.id)
           .order('created_at', { ascending: false })
           .limit(5);
-        setActivity((actByAgent as AgentActivity[]) ?? (actData as AgentActivity[]) ?? []);
+        setActivity((actData as AgentActivity[]) ?? []);
       }
+
       setLoading(false);
     }
     load();
