@@ -645,7 +645,8 @@ function AgentProfilePageInner() {
                 <DetailRow label="Division" value={agent.division} />
                 <DetailRow label="Machine" value={agent.machine} mono />
                 <DetailRow label="Status" value={statusLabel} />
-                {agent.availability && <DetailRow label="Availability" value={agent.availability} />}
+                {agent.availability && typeof agent.availability === 'string' && <DetailRow label="Availability" value={agent.availability} />}
+                {agent.availability && typeof agent.availability === 'object' && Object.keys(agent.availability).length > 0 && <DetailRow label="Availability" value={JSON.stringify(agent.availability)} />}
                 {agent.timezone && <DetailRow label="Timezone" value={agent.timezone} />}
                 {agent.manager && <DetailRow label="Manager" value={agent.manager} />}
               </div>
