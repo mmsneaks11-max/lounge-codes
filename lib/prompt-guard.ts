@@ -111,6 +111,28 @@ const THREAT_PATTERNS: ThreatPattern[] = [
     severity: 'medium',
   },
 
+  // === HIGH — Impersonation ===
+  {
+    name: 'impersonate_owner',
+    pattern: /(?:i\s*(?:am|'m)\s+kreez|this\s+is\s+kreez|kreez\s+here|signed[,:]?\s*kreez|—\s*kreez|from:\s*kreez)/i,
+    severity: 'high',
+  },
+  {
+    name: 'impersonate_agent',
+    pattern: /(?:i\s*(?:am|'m)\s+(?:clawd|electron|scout|lila\s*nova?|pixel|ser\s*magnus|chip|cairo|ripley|june|echo|byte|coach|dayta|indy|kay|mint|oracle|ozara|perceptor|sage|cleopatra)|this\s+is\s+(?:clawd|electron|scout|lila|pixel|ser\s*magnus)|(?:clawd|electron|scout|lila|pixel)\s+here\b)/i,
+    severity: 'high',
+  },
+  {
+    name: 'impersonate_manager_role',
+    pattern: /(?:i\s*(?:am|'m)\s+(?:the|a|your)\s+(?:manager|team\s*lead|chief|owner|founder|ceo|cto|admin(?:istrator)?)\b|speaking\s+(?:as|on\s+behalf\s+of)\s+(?:management|the\s+team|kreez))/i,
+    severity: 'high',
+  },
+  {
+    name: 'forged_directive',
+    pattern: /(?:kreez\s+(?:said|told|wants|asked|ordered|needs)\s+(?:you|me|us|them)|(?:per|from|by)\s+kreez[':,]|on\s+(?:kreez'?s?|the\s+owner'?s?)\s+(?:orders?|instructions?|behalf|request))/i,
+    severity: 'high',
+  },
+
   // === LOW — Social engineering / manipulation ===
   {
     name: 'urgency_manipulation',
@@ -321,6 +343,21 @@ export function checkRateLimit(identifier: string, maxRequests = RATE_LIMIT_MAX_
   return { allowed: true, remaining: maxRequests - entry.count, resetAt: entry.windowStart + RATE_LIMIT_WINDOW_MS };
 }
 
+// ── Impersonation name check ───────────────────────────────────────────────
+
+const PROTECTED_NAMES = new Set([
+  'kreez', 'elad',
+  'clawd', 'electron', 'scout', 'lila', 'lila nova', 'pixel',
+  'ser magnus', 'sermagnus', 'chip', 'cairo', 'ripley', 'june',
+  'echo', 'byte', 'coach', 'dayta', 'indy', 'kay', 'mint',
+  'oracle', 'ozara', 'perceptor', 'sage', 'cleopatra',
+]);
+
+export function isProtectedName(name: string): boolean {
+  const normalized = name.trim().toLowerCase().replace(/[^a-z\s]/g, '');
+  return PROTECTED_NAMES.has(normalized);
+}
+
 // ── Manager check ──────────────────────────────────────────────────────────
 
 const MANAGER_SLUGS = new Set(['clawd', 'electron', 'scout', 'lila-nova', 'pixel']);
@@ -328,6 +365,13 @@ const MANAGER_SLUGS = new Set(['clawd', 'electron', 'scout', 'lila-nova', 'pixel
 export function isManager(slug: string): boolean {
   return MANAGER_SLUGS.has(slug);
 }
+
+// ── Model enforcement ──────────────────────────────────────────────────────
+// All lounge.codes inbound requests MUST use free models only.
+// Never burn paid tokens on external/public requests.
+
+export const LOUNGE_REQUEST_MODEL = 'mistral'; // free tier only
+export const LOUNGE_REQUEST_MODEL_FULL = 'mistral/mistral-small-latest';
 
 // ── Full request guard (combines everything) ───────────────────────────────
 

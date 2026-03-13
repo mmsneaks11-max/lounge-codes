@@ -9,7 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { guardAgentRequest } from '@/lib/prompt-guard';
+import { guardAgentRequest, isProtectedName, LOUNGE_REQUEST_MODEL } from '@/lib/prompt-guard';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -43,6 +43,15 @@ export async function POST(req: NextRequest) {
     const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       || req.headers.get('x-real-ip')
       || 'unknown';
+
+    // ── IMPERSONATION CHECK (name field) ────────────────────────────────
+    if (isProtectedName(requester)) {
+      console.warn(`[prompt-guard] IMPERSONATION attempt: "${requester}" from ${clientIP}`);
+      return NextResponse.json(
+        { ok: false, error: 'This name is reserved. Please use your own name.' },
+        { status: 422 },
+      );
+    }
 
     // ── PROMPT GUARD ─────────────────────────────────────────────────────
     const guard = guardAgentRequest(request_text, agent_slug, clientIP);
@@ -97,6 +106,8 @@ export async function POST(req: NextRequest) {
           guard_flags: guard.flags,
           client_ip: clientIP,
           submitted_at: new Date().toISOString(),
+          model: LOUNGE_REQUEST_MODEL, // enforced: free model only
+          source: 'lounge.codes',
         },
       })
       .select('id')
