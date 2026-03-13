@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -89,7 +89,7 @@ function activityIcon(type: string): string {
 
 // ── Main Page ──────────────────────────────────────────────────────────────
 
-export default function AgentProfilePage() {
+function AgentProfilePageInner() {
   const params = useParams();
   const slug   = params?.slug as string;
 
@@ -673,5 +673,17 @@ function DetailRow({ label, value, mono }: { label: string; value: string; mono?
         {value}
       </div>
     </div>
+  );
+}
+
+export default function AgentProfilePage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#0A0A0F', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: '#6B6B80', fontSize: 14 }}>Loading agent…</div>
+      </div>
+    }>
+      <AgentProfilePageInner />
+    </Suspense>
   );
 }

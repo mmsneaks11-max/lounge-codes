@@ -3,6 +3,7 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -34,7 +35,7 @@ const urgencyConfig: Record<Urgency, { label: string; color: string; bg: string;
 
 // ── Main Page ──────────────────────────────────────────────────────────────
 
-export default function RequestAgentPage() {
+function RequestAgentPageInner() {
   const params = useParams();
   const slug   = params?.slug as string;
 
@@ -510,3 +511,15 @@ const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-geist-sans)',
   transition: 'border-color 0.2s ease',
 };
+
+export default function RequestAgentPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#0A0A0F', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: '#6B6B80', fontSize: 14 }}>Loading…</div>
+      </div>
+    }>
+      <RequestAgentPageInner />
+    </Suspense>
+  );
+}
