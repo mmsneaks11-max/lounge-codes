@@ -4,6 +4,139 @@
 export interface Database {
   public: {
     Tables: {
+      agents: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          emoji: string | null
+          division: string | null
+          machine: string | null
+          role: string | null
+          skills: string[]
+          status: string
+          bio: string | null
+          timezone: string
+          availability: Record<string, unknown>
+          profile_image: string | null
+          manager: string | null
+          featured: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          emoji?: string | null
+          division?: string | null
+          machine?: string | null
+          role?: string | null
+          skills?: string[]
+          status?: string
+          bio?: string | null
+          timezone?: string
+          availability?: Record<string, unknown>
+          profile_image?: string | null
+          manager?: string | null
+          featured?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          emoji?: string | null
+          division?: string | null
+          machine?: string | null
+          role?: string | null
+          skills?: string[]
+          status?: string
+          bio?: string | null
+          timezone?: string
+          availability?: Record<string, unknown>
+          profile_image?: string | null
+          manager?: string | null
+          featured?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      agent_requests: {
+        Row: {
+          id: string
+          agent_id: string
+          requester: string
+          request_text: string
+          urgency: string
+          status: string
+          response_text: string | null
+          responded_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          agent_id: string
+          requester: string
+          request_text: string
+          urgency?: string
+          status?: string
+          response_text?: string | null
+          responded_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          agent_id?: string
+          requester?: string
+          request_text?: string
+          urgency?: string
+          status?: string
+          response_text?: string | null
+          responded_at?: string | null
+          created_at?: string
+        }
+        Relationships: [{
+          foreignKeyName: "agent_requests_agent_id_fkey"
+          columns: ["agent_id"]
+          referencedRelation: "agents"
+          referencedColumns: ["id"]
+        }]
+      }
+      agent_activity: {
+        Row: {
+          id: string
+          agent_id: string
+          type: string
+          summary: string
+          metadata: Record<string, unknown>
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          agent_id: string
+          type: string
+          summary: string
+          metadata?: Record<string, unknown>
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          agent_id?: string
+          type?: string
+          summary?: string
+          metadata?: Record<string, unknown>
+          created_at?: string
+        }
+        Relationships: [{
+          foreignKeyName: "agent_activity_agent_id_fkey"
+          columns: ["agent_id"]
+          referencedRelation: "agents"
+          referencedColumns: ["id"]
+        }]
+      }
       agent_presence: {
         Row: {
           id: string
