@@ -109,7 +109,7 @@ function AgentProfilePageInner() {
       if (agentErr || !agentData) {
         // Fallback: try by id
         const { data: byId } = await supabase
-          .from('agents').select('*').eq('id', slug).single() as { data: any };
+          .from('agents').select('*').eq('id', slug).single();
         if (byId) {
           foundAgent = byId as Agent;
         } else {

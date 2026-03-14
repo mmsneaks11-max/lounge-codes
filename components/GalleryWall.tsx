@@ -67,7 +67,7 @@ export default function GalleryWall({ label = '🖼️ Gallery Wall — recent' 
       .limit(10)
       .then(({ data, error }) => {
         if (!error && data && data.length > 0) {
-          setItems(data.map((item: any, i: number) => ({
+          setItems(data.map((item: { id: string; title: string; agent_emoji?: string; agent_name: string; created_at: string }, i: number) => ({
             id: item.id,
             title: item.title,
             agentEmoji: item.agent_emoji || '🤖',

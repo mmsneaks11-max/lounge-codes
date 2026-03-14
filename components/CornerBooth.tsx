@@ -39,7 +39,7 @@ export default function CornerBooth() {
         .order('created_at', { ascending: false })
 
       if (respData) {
-        setResponses(respData.map((r: any) => ({ agent: r.agent_name, emoji: r.agent_emoji || '🤖', text: r.response })))
+        setResponses(respData.map((r: { agent_name: string; agent_emoji?: string; response: string }) => ({ agent: r.agent_name, emoji: r.agent_emoji || '🤖', text: r.response })))
       }
     }
     setLoading(false)
