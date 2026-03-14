@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import MissionBoard from '@/components/MissionBoard'
+import BulletinBoard from '@/components/BulletinBoard'
 import type { AgentStatusRow, AgentState, StatusConfidence } from '@/lib/war-room.types'
 
 // ── Division taxonomy ─────────────────────────────────────────────────────────
@@ -379,9 +380,15 @@ export default function OpsPage() {
           </AnimatePresence>
         )}
 
-        {/* Mission Board */}
-        <div style={{ marginTop: 40 }}>
+        {/* Mission Board + Bulletin Board side by side on wide, stacked on narrow */}
+        <div style={{
+          marginTop: 40,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+          gap: 24,
+        }}>
           <MissionBoard />
+          <BulletinBoard />
         </div>
       </div>
     </div>
