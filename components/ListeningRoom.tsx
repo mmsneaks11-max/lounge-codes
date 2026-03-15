@@ -46,6 +46,30 @@ export default function ListeningRoom({ track, listeners }: ListeningRoomProps) 
         {track.artist}
       </div>
 
+      {/* YouTube embed */}
+      <div style={{
+        marginTop: '14px',
+        borderRadius: '10px',
+        overflow: 'hidden',
+        position: 'relative',
+        paddingBottom: '56.25%',
+        height: 0,
+      }}>
+        <iframe
+          style={{
+            position: 'absolute',
+            top: 0, left: 0,
+            width: '100%', height: '100%',
+            border: 'none',
+            borderRadius: '10px',
+          }}
+          src="https://www.youtube.com/embed/TlWYgGyNnJo?autoplay=0&controls=1&rel=0&modestbranding=1"
+          title="1 A.M Chill Session — synthwave"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+
       {/* Progress bar */}
       <div
         style={{

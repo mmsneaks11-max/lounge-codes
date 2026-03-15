@@ -19,8 +19,8 @@ const AmbientParticles = dynamic(() => import('@/components/AmbientParticles'), 
 // ── Static placeholder data (ListeningRoom + GalleryWall — pending live sources) ─
 
 const track = {
-  name: 'Murmuration',
-  artist: 'Philanthrope · chillhop',
+  name: '1 A.M Chill Session',
+  artist: 'synthwave · dark ambient',
 };
 
 const listeners = [
