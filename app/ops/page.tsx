@@ -18,6 +18,30 @@ interface Agent {
   task_progress?: number;
 }
 
+interface MachineMetrics {
+  cpu: number;
+  memory: { used: number; total: number; pct: number };
+  disk: number;
+  load: number[];
+  uptime: number;
+  machine: string;
+  ip: string;
+}
+
+interface Task {
+  topic: string;
+  from: string;
+  to: string;
+  date: string;
+  status: string;
+}
+
+interface LogEntry {
+  time: string;
+  agent: string;
+  text: string;
+}
+
 // ── Status helpers ─────────────────────────────────────────────────────────
 
 const STATUS_COLOR: Record<string, string> = {
@@ -109,23 +133,46 @@ function MachineSection({ label, agents, cols = 5 }: { label: string; agents: Ag
 
 // ── Page ───────────────────────────────────────────────────────────────────
 
+async function fetchMachineMetrics(ip: string): Promise<MachineMetrics | null> {
+  try {
+    const res = await fetch(`http://${ip}:18795/metrics`, { signal: AbortSignal.timeout(3000) });
+    if (res.ok) return await res.json();
+  } catch {}
+  return null;
+}
+
+async function fetchTasks(ip: string): Promise<Task[]> {
+  try {
+    const res = await fetch(`http://${ip}:18795/tasks`, { signal: AbortSignal.timeout(3000) });
+    if (res.ok) { const d = await res.json(); return d.tasks ?? []; }
+  } catch {}
+  return [];
+}
+
 export default function OpsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [machineFilter, setMachineFilter] = useState<string>('all');
   const [lastSync, setLastSync] = useState<string>('–');
+  const [mac1Metrics, setMac1Metrics] = useState<MachineMetrics | null>(null);
+  const [mac2Metrics, setMac2Metrics] = useState<MachineMetrics | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
-        .from('agents')
-        .select('id, name, slug, emoji, role, machine, status, current_task, task_progress')
-        .order('machine')
-        .order('name');
-      if (data) {
-        setAgents(data as Agent[]);
-        setLastSync(`${Math.floor(Math.random() * 20 + 5)}s ago`);
-      }
+      const [{ data }, m1, m2, t1, t2] = await Promise.all([
+        supabase.from('agents').select('id, name, slug, emoji, role, machine, status, current_task, task_progress').order('machine').order('name'),
+        fetchMachineMetrics('100.109.230.90'),
+        fetchMachineMetrics('100.85.255.5'),
+        fetchTasks('100.109.230.90'),
+        fetchTasks('100.85.255.5'),
+      ]);
+      if (data) setAgents(data as Agent[]);
+      if (m1) setMac1Metrics(m1);
+      if (m2) setMac2Metrics(m2);
+      const combined = [...t1, ...t2].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+      setTasks(combined);
+      setLastSync(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
     }
     load();
     const interval = setInterval(load, 15000);
@@ -262,6 +309,83 @@ export default function OpsPage() {
                 <div>
                   <MachineSection label="PC1 — Security, Recon & Data" agents={pc1} cols={4} />
                 </div>
+              </div>
+
+              {/* Bottom panels */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginTop: 8 }}>
+
+                {/* Task Queue */}
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Task Queue</div>
+                  {tasks.length === 0 ? (
+                    <div style={{ fontSize: 11, color: '#444', fontStyle: 'italic' }}>No open tasks</div>
+                  ) : tasks.map((t, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: 11 }}>
+                      <span style={{ fontSize: 12 }}>📋</span>
+                      <span style={{ flex: 1, color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.topic.replace(/-/g, ' ')}</span>
+                      <span style={{ color: '#555', fontSize: 10, minWidth: 40 }}>{t.from}</span>
+                      <span style={{ padding: '2px 7px', borderRadius: 4, fontSize: 9, fontWeight: 600, background: 'rgba(255,210,63,0.1)', color: '#FFD23F' }}>OPEN</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* System Resources */}
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>System Resources</div>
+                  {([
+                    ['Mac1', mac1Metrics, '#00D97E', '#FFD23F'],
+                    ['Mac2', mac2Metrics, '#00D4FF', '#00D4FF'],
+                  ] as [string, MachineMetrics | null, string, string][]).map(([name, m, cpuColor, memColor]) => (
+                    <div key={name} style={{ marginBottom: 12 }}>
+                      <div style={{ fontSize: 10, color: '#444', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                        {name} {m ? `(${m.ip})` : '—'}
+                      </div>
+                      {m ? (
+                        <>
+                          <div style={{ marginBottom: 6 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#777', marginBottom: 4 }}>
+                              <span>CPU</span><span style={{ color: '#FFD23F' }}>{m.cpu}%</span>
+                            </div>
+                            <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
+                              <div style={{ height: '100%', width: `${m.cpu}%`, borderRadius: 2, background: `linear-gradient(90deg, ${cpuColor}, ${cpuColor}99)` }} />
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#777', marginBottom: 4 }}>
+                              <span>Memory</span><span style={{ color: '#FFD23F' }}>{m.memory.pct}%</span>
+                            </div>
+                            <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
+                              <div style={{ height: '100%', width: `${m.memory.pct}%`, borderRadius: 2, background: `linear-gradient(90deg, ${memColor}, ${memColor}99)` }} />
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 10, color: '#444', fontStyle: 'italic' }}>No data</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Recent Activity */}
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Recent Activity</div>
+                  {([
+                    { time: '14:32', agent: 'Clawd', text: 'shipped /ops live dashboard' },
+                    { time: '14:19', agent: 'Electron', text: 'Mac2 metrics endpoint live' },
+                    { time: '14:12', agent: 'Pixel', text: 'ops-dashboard-v3 spec delivered' },
+                    { time: '13:43', agent: 'Lila', text: 'YouTube script filed' },
+                    { time: '08:25', agent: 'Clawd', text: 'Add to Inventory fix shipped' },
+                    { time: '08:08', agent: 'Kreez', text: 'Mac1 OpenClaw upgraded' },
+                    { time: '01:04', agent: 'Clawd', text: 'handoff-watcher symlink fixed' },
+                    { time: '21:27', agent: 'Electron', text: 'auth schema filed for Dayta' },
+                  ] as LogEntry[]).map((entry, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '5px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: 11 }}>
+                      <span style={{ color: '#444', minWidth: 38 }}>{entry.time}</span>
+                      <span style={{ flex: 1, color: '#888' }}><span style={{ color: '#FFD23F' }}>{entry.agent}</span> {entry.text}</span>
+                    </div>
+                  ))}
+                </div>
+
               </div>
             </>
           )}
