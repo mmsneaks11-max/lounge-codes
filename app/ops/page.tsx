@@ -19,13 +19,16 @@ interface Agent {
 }
 
 interface MachineMetrics {
-  cpu: number;
-  memory: { used: number; total: number; pct: number };
-  disk: number;
-  load: number[];
-  uptime: number;
-  machine: string;
-  ip: string;
+  hostname?: string;
+  label?: string;
+  online: boolean;
+  error?: string;
+  cpu?: { usage_pct: number };
+  memory?: { total_gb: number; usage_pct: number };
+  disk?: { usage_pct: number };
+  load?: { '1m': number; '5m': number; '15m': number };
+  uptime?: { human: string; seconds: number };
+  tasks?: Task[];
 }
 
 interface Task {
@@ -133,17 +136,22 @@ function MachineSection({ label, agents, cols = 5 }: { label: string; agents: Ag
 
 // ── Page ───────────────────────────────────────────────────────────────────
 
-async function fetchMachineMetrics(ip: string): Promise<MachineMetrics | null> {
+const AGGREGATOR = 'http://100.85.255.5:18796';
+
+async function fetchAllMachines(): Promise<Record<string, MachineMetrics>> {
   try {
-    const res = await fetch(`http://${ip}:18795/metrics`, { signal: AbortSignal.timeout(3000) });
-    if (res.ok) return await res.json();
+    const res = await fetch(`${AGGREGATOR}/machines`, { signal: AbortSignal.timeout(4000) });
+    if (res.ok) {
+      const d = await res.json();
+      return d.machines ?? d;
+    }
   } catch {}
-  return null;
+  return {};
 }
 
-async function fetchTasks(ip: string): Promise<Task[]> {
+async function fetchAllTasks(): Promise<Task[]> {
   try {
-    const res = await fetch(`http://${ip}:18795/tasks`, { signal: AbortSignal.timeout(3000) });
+    const res = await fetch(`${AGGREGATOR}/tasks`, { signal: AbortSignal.timeout(4000) });
     if (res.ok) { const d = await res.json(); return d.tasks ?? []; }
   } catch {}
   return [];
@@ -154,24 +162,19 @@ export default function OpsPage() {
   const [filter, setFilter] = useState<string>('all');
   const [machineFilter, setMachineFilter] = useState<string>('all');
   const [lastSync, setLastSync] = useState<string>('–');
-  const [mac1Metrics, setMac1Metrics] = useState<MachineMetrics | null>(null);
-  const [mac2Metrics, setMac2Metrics] = useState<MachineMetrics | null>(null);
+  const [machines, setMachines] = useState<Record<string, MachineMetrics>>({});
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     async function load() {
-      const [{ data }, m1, m2, t1, t2] = await Promise.all([
+      const [{ data }, allMachines, allTasks] = await Promise.all([
         supabase.from('agents').select('id, name, slug, emoji, role, machine, status, current_task, task_progress').order('machine').order('name'),
-        fetchMachineMetrics('100.109.230.90'),
-        fetchMachineMetrics('100.85.255.5'),
-        fetchTasks('100.109.230.90'),
-        fetchTasks('100.85.255.5'),
+        fetchAllMachines(),
+        fetchAllTasks(),
       ]);
       if (data) setAgents(data as Agent[]);
-      if (m1) setMac1Metrics(m1);
-      if (m2) setMac2Metrics(m2);
-      const combined = [...t1, ...t2].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
-      setTasks(combined);
+      setMachines(allMachines);
+      setTasks(allTasks.slice(0, 8));
       setLastSync(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
     }
     load();
@@ -333,31 +336,33 @@ export default function OpsPage() {
                 <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: 14 }}>
                   <div style={{ fontSize: 10, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>System Resources</div>
                   {([
-                    ['Mac1', mac1Metrics, '#00D97E', '#FFD23F'],
-                    ['Mac2', mac2Metrics, '#00D4FF', '#00D4FF'],
+                    ['Mac1', machines['mac1'] ?? null, '#00D97E', '#FFD23F'],
+                    ['Mac2', machines['mac2'] ?? null, '#00D4FF', '#00D4FF'],
+                    ['PC1',  machines['pc1']  ?? null, '#FFD23F', '#FFD23F'],
                   ] as [string, MachineMetrics | null, string, string][]).map(([name, m, cpuColor, memColor]) => (
                     <div key={name} style={{ marginBottom: 12 }}>
                       <div style={{ fontSize: 10, color: '#444', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-                        {name} {m ? `(${m.ip})` : '—'}
+                        {m?.label || name} {m?.hostname ? `(${m.hostname})` : '—'}
                       </div>
                       {m ? (
                         <>
                           <div style={{ marginBottom: 6 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#777', marginBottom: 4 }}>
-                              <span>CPU</span><span style={{ color: '#FFD23F' }}>{m.cpu}%</span>
+                              <span>CPU</span><span style={{ color: '#FFD23F' }}>{m.cpu?.usage_pct ?? 0}%</span>
                             </div>
                             <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-                              <div style={{ height: '100%', width: `${m.cpu}%`, borderRadius: 2, background: `linear-gradient(90deg, ${cpuColor}, ${cpuColor}99)` }} />
+                              <div style={{ height: '100%', width: `${m.cpu?.usage_pct ?? 0}%`, borderRadius: 2, background: `linear-gradient(90deg, ${cpuColor}, ${cpuColor}99)` }} />
                             </div>
                           </div>
                           <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#777', marginBottom: 4 }}>
-                              <span>Memory</span><span style={{ color: '#FFD23F' }}>{m.memory.pct}%</span>
+                              <span>Memory</span><span style={{ color: '#FFD23F' }}>{m.memory?.usage_pct ?? 0}%</span>
                             </div>
                             <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-                              <div style={{ height: '100%', width: `${m.memory.pct}%`, borderRadius: 2, background: `linear-gradient(90deg, ${memColor}, ${memColor}99)` }} />
+                              <div style={{ height: '100%', width: `${m.memory?.usage_pct ?? 0}%`, borderRadius: 2, background: `linear-gradient(90deg, ${memColor}, ${memColor}99)` }} />
                             </div>
                           </div>
+                          {m.uptime && <div style={{ fontSize: 9, color: '#444', marginTop: 4 }}>up {m.uptime.human}</div>}
                         </>
                       ) : (
                         <div style={{ fontSize: 10, color: '#444', fontStyle: 'italic' }}>No data</div>
