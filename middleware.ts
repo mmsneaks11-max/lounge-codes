@@ -32,7 +32,7 @@ function getClientIp(req: NextRequest) {
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
-  const protectedPaths = ['/handoffs', '/ops', '/info']
+  const protectedPaths = ['/handoffs', '/ops', '/info', '/lounge']
   const isProtected = protectedPaths.some(p => pathname === p || pathname.startsWith(p + '/'))
   if (!isProtected) return NextResponse.next()
 
@@ -53,5 +53,7 @@ export const config = {
     '/ops/:path*',
     '/info',
     '/info/:path*',
+    '/lounge',
+    '/lounge/:path*',
   ],
 }
