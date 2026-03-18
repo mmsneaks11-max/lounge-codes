@@ -121,7 +121,8 @@ function PostNote({ onPosted }: { onPosted: () => void }) {
   const post = async () => {
     if (!from.trim() || !msg.trim()) return;
     setPosting(true);
-    await supabase.from('lounge_notes').insert({ from_agent: from.trim(), to_agent: to.trim() || 'all', message: msg.trim() });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from('lounge_notes') as any).insert({ from_agent: from.trim(), to_agent: to.trim() || 'all', message: msg.trim() });
     setFrom(''); setTo('all'); setMsg('');
     setPosting(false);
     onPosted();
