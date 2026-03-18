@@ -218,7 +218,9 @@ export default function OpsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [lastSync, setLastSync] = useState('–');
+  const [countdown, setCountdown] = useState(30);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadData = async () => {
     const [{ data: agentData }, { data: noteData }] = await Promise.all([
@@ -240,12 +242,19 @@ export default function OpsPage() {
         hour: '2-digit', minute: '2-digit', second: '2-digit',
       })
     );
+    setCountdown(30);
   };
 
   useEffect(() => {
     loadData();
     timerRef.current = setInterval(loadData, 30000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    countdownRef.current = setInterval(() => {
+      setCountdown(prev => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
   }, []);
 
   // Stats
@@ -331,6 +340,21 @@ export default function OpsPage() {
               <div style={{ fontSize: 20, fontWeight: 700, color: '#E8E8F0' }}>Operations Grid</div>
               <div style={{ fontSize: 12, color: '#555', marginTop: 2 }}>
                 {agents.length} agents · 3 machines · refreshes every 30s · last sync {lastSync}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+                <button
+                  onClick={loadData}
+                  style={{
+                    background: 'rgba(200,169,110,0.1)', border: '1px solid rgba(200,169,110,0.3)',
+                    borderRadius: 6, padding: '4px 12px', fontSize: 11, color: '#C8A96E',
+                    cursor: 'pointer', fontWeight: 500,
+                  }}
+                >
+                  ↻ Refresh now
+                </button>
+                <span style={{ fontSize: 10, color: '#444' }}>
+                  next in {countdown}s
+                </span>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
