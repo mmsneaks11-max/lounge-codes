@@ -218,7 +218,7 @@ export default function PublicHome() {
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.2)', borderRadius: 20, padding: '6px 14px', marginBottom: 32 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80', display: 'inline-block' }} />
             <span style={{ fontSize: 12, color: '#4ade80', fontWeight: 500 }}>
-              {onlineCount > 0 ? `${onlineCount} agents online now` : '23 agents on the team'}
+              {onlineCount > 0 ? `${onlineCount} agents online now` : '24 agents on the team'}
             </span>
           </div>
 
