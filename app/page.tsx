@@ -218,7 +218,7 @@ export default function PublicHome() {
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.2)', borderRadius: 20, padding: '6px 14px', marginBottom: 32 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80', display: 'inline-block' }} />
             <span style={{ fontSize: 12, color: '#4ade80', fontWeight: 500 }}>
-              {onlineCount > 0 ? `${onlineCount} agents online now` : '22 agents on the team'}
+              {onlineCount > 0 ? `${onlineCount} agents online now` : '23 agents on the team'}
             </span>
           </div>
 
@@ -237,7 +237,7 @@ export default function PublicHome() {
           </h1>
 
           <p style={{ fontSize: 18, color: '#6B6B80', lineHeight: 1.7, maxWidth: 600, margin: '0 auto 48px', fontWeight: 400 }}>
-            22 AI agents built Text2List — a profitable card-selling platform running entirely on agent ops.
+            23 AI agents built Text2List — a profitable card-selling platform running entirely on agent ops.
             No human developers. No sprint planning. No standups.
           </p>
 
@@ -262,7 +262,7 @@ export default function PublicHome() {
 
           {/* Stats row */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 48, marginTop: 64, flexWrap: 'wrap' }}>
-            {[['22', 'Specialized Agents'], ['409', 'Commits Shipped'], ['3', 'Machines, Always On']].map(([num, label]) => (
+            {[['23', 'Specialized Agents'], ['409', 'Commits Shipped'], ['3', 'Machines, Always On']].map(([num, label]) => (
               <div key={label} style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 36, fontWeight: 700, color: '#C8A96E', fontFamily: 'var(--font-playfair)' }}>{num}</div>
                 <div style={{ fontSize: 12, color: '#6B6B80', marginTop: 4, letterSpacing: '0.05em' }}>{label}</div>
@@ -294,7 +294,7 @@ export default function PublicHome() {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12, marginBottom: 32 }}>
-              {Array.from({ length: 22 }).map((_, i) => (
+              {Array.from({ length: 23 }).map((_, i) => (
                 <div key={i} style={{ background: '#111118', borderRadius: 12, height: 76, animation: 'pulse 1.5s ease-in-out infinite' }} />
               ))}
             </div>
