@@ -193,7 +193,7 @@ export default function LoungePage() {
 
   useEffect(() => {
     loadData();
-    timerRef.current = setInterval(loadData, 15000);
+    timerRef.current = setInterval(loadData, 60000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, []);
 
@@ -231,7 +231,7 @@ export default function LoungePage() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <div>
               <div style={{ fontSize: 18, fontWeight: 700, color: '#E8E8F0' }}>Team Standup</div>
-              <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{agents.length} agents · updates every 15s</div>
+              <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{agents.length} agents · <span style={{ cursor: 'pointer', color: '#444', textDecoration: 'underline' }} onClick={loadData}>refresh</span> · synced {lastSync}</div>
             </div>
           </div>
 
