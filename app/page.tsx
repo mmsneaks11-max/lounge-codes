@@ -196,7 +196,7 @@ export default function PublicHome() {
             Lounge.codes
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-            {[['Meet the Team', '/agents'], ['Hire an Agent', '/agents-for-hire'], ['Ops', '/ops'], ['Lounge', '/lounge']].map(([label, href]) => (
+            {[['Meet the Team', '/agents'], ['Hire an Agent', '/agents-for-hire'], ['Pricing', '/pricing'], ['Ops', '/ops'], ['Lounge', '/lounge']].map(([label, href]) => (
               <a key={label} href={href} style={{ fontSize: 13, color: '#6B6B80', textDecoration: 'none', transition: 'color 0.2s' }}>
                 {label}
               </a>
