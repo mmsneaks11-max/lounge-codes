@@ -6,14 +6,23 @@ import { supabase } from '@/lib/supabase';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
-interface Handoff {
+interface DBHandoff {
   id: string;
-  from: string;
-  to: string;
-  fromEmoji: string;
-  toEmoji: string;
+  from_agent: string;
+  to_agent: string;
   topic: string;
   status: 'OPEN' | 'RESOLVED' | 'BLOCKED';
+  priority: string;
+  body: string;
+  resolution: string;
+  blocked_on: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Handoff extends DBHandoff {
+  fromEmoji: string;
+  toEmoji: string;
   date: string;
 }
 
@@ -26,18 +35,30 @@ interface Note {
   created_at: string;
 }
 
-// ── Static handoff data ────────────────────────────────────────────────────
+// ── Agent emoji mapping ────────────────────────────────────────────────────
 
-const HANDOFFS: Handoff[] = [
-  { id: '1', from: 'Clawd',    to: 'Dayta',   fromEmoji: '🐾', toEmoji: '🗄️', topic: 'Add Spoke to agents table',       status: 'RESOLVED', date: '2026-03-18' },
-  { id: '2', from: 'Scout',    to: 'Lila',    fromEmoji: '🔍', toEmoji: '💖', topic: 'Messaging gaps — SEO title anxiety', status: 'OPEN',     date: '2026-03-18' },
-  { id: '3', from: 'Clawd',    to: 'Indy',    fromEmoji: '🐾', toEmoji: '🎒', topic: 'March Madness card alert',        status: 'OPEN',     date: '2026-03-18' },
-  { id: '4', from: 'Ripley',   to: 'Clawd',   fromEmoji: '👂', toEmoji: '🐾', topic: 'Reddit browser failure',          status: 'RESOLVED', date: '2026-03-18' },
-  { id: '5', from: 'Kay',      to: 'Clawd',   fromEmoji: '📎', toEmoji: '🐾', topic: 'Dashboard eBay gate friction',    status: 'RESOLVED', date: '2026-03-18' },
-  { id: '6', from: 'Scout',    to: 'Clawd',   fromEmoji: '🔍', toEmoji: '🐾', topic: 'Cross-delisting research',        status: 'OPEN',     date: '2026-03-18' },
-  { id: '7', from: 'Clawd',    to: 'Chip',    fromEmoji: '🐾', toEmoji: '🐿️', topic: 'Railway token',                   status: 'RESOLVED', date: '2026-03-18' },
-  { id: '8', from: 'Pixel',    to: 'Clawd',   fromEmoji: '✨', toEmoji: '🐾', topic: 'AgentDeck visual feedback',       status: 'RESOLVED', date: '2026-03-15' },
-];
+const AGENT_EMOJI: Record<string, string> = {
+  'clawd': '🐾',
+  'electron': '⚡',
+  'dayta': '🗄️',
+  'scout': '🔍',
+  'lila': '💖',
+  'indy': '🎒',
+  'ripley': '👂',
+  'kay': '📎',
+  'chip': '🐿️',
+  'pixel': '✨',
+  'marcy': '📝',
+  'cairo': '🌍',
+  'june': '🎯',
+  'cleopatra': '👑',
+  'spoke': '🗣️',
+  'oz': '🧙',
+  'ozara': '💼',
+  'sage': '🧠',
+  'moltbot': '🤖',
+  'clawdbot': '🤖',
+};
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -63,27 +84,61 @@ function timeAgo(ts: string) {
 
 // ── Handoff Card ───────────────────────────────────────────────────────────
 
-function HandoffCard({ h }: { h: Handoff }) {
+function HandoffCard({ h, expanded, onToggle }: { h: Handoff; expanded: boolean; onToggle: () => void }) {
   const color = STATUS_COLOR[h.status];
   const bg = STATUS_BG[h.status];
+  const priorityColor = {
+    'p0': '#FF4D4D',
+    'p1': '#FF9500',
+    'p2': '#00D97E',
+    'p3': '#555',
+  }[h.priority] || '#555';
+
+  const dateObj = new Date(h.created_at);
+  const date = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
   return (
-    <div style={{
-      background: '#111118',
-      border: '1px solid rgba(255,255,255,0.06)',
-      borderLeft: `2px solid ${color}`,
-      borderRadius: 10,
-      padding: '14px 16px',
-      transition: 'background 0.15s',
-    }}>
-      {/* Agents row */}
+    <div
+      onClick={onToggle}
+      style={{
+        background: '#111118',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderLeft: `2px solid ${color}`,
+        borderRadius: 10,
+        padding: '14px 16px',
+        transition: 'background 0.15s, border-color 0.15s',
+        cursor: 'pointer',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = '#15151D';
+        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = '#111118';
+        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+      }}
+    >
+      {/* Agents + status row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
         <span style={{ fontSize: 18 }}>{h.fromEmoji}</span>
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#E8E8F0' }}>{h.from}</span>
+        <span style={{ fontSize: 12, fontWeight: 600, color: '#E8E8F0' }}>{h.from_agent}</span>
         <span style={{ fontSize: 10, color: '#555' }}>→</span>
         <span style={{ fontSize: 18 }}>{h.toEmoji}</span>
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#E8E8F0' }}>{h.to}</span>
-        <span style={{ marginLeft: 'auto' }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: '#E8E8F0' }}>{h.to_agent}</span>
+        
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{
+            fontSize: 9,
+            fontWeight: 600,
+            color: priorityColor,
+            background: `${priorityColor}22`,
+            border: `1px solid ${priorityColor}44`,
+            borderRadius: 3,
+            padding: '2px 6px',
+            textTransform: 'uppercase',
+          }}>
+            {h.priority}
+          </span>
           <span style={{
             fontSize: 10,
             fontWeight: 600,
@@ -97,14 +152,49 @@ function HandoffCard({ h }: { h: Handoff }) {
           }}>
             {h.status}
           </span>
-        </span>
+        </div>
       </div>
 
       {/* Topic */}
       <div style={{ fontSize: 13, color: '#A0A0B0', lineHeight: 1.5, marginBottom: 8 }}>{h.topic}</div>
 
-      {/* Date */}
-      <div style={{ fontSize: 10, color: '#444' }}>{h.date}</div>
+      {/* Footer: date + expand hint */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontSize: 10, color: '#444' }}>{date}</div>
+        <div style={{ fontSize: 9, color: '#555', fontStyle: 'italic' }}>
+          {expanded ? '▼ collapse' : '▶ expand'}
+        </div>
+      </div>
+
+      {/* Expanded content */}
+      {expanded && (
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)', fontSize: 12, color: '#A0A0B0' }}>
+          {h.body && (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: '#6B6B80', marginBottom: 4 }}>DETAILS</div>
+              <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, color: '#C0C0D0' }}>{h.body}</div>
+            </div>
+          )}
+
+          {h.status === 'RESOLVED' && h.resolution && (
+            <div style={{ marginBottom: 12, padding: 8, background: 'rgba(0,217,126,0.08)', borderRadius: 6, borderLeft: '2px solid #00D97E' }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: '#00D97E', marginBottom: 4 }}>✓ RESOLUTION</div>
+              <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{h.resolution}</div>
+            </div>
+          )}
+
+          {h.status === 'BLOCKED' && h.blocked_on && (
+            <div style={{ marginBottom: 12, padding: 8, background: 'rgba(255,77,77,0.08)', borderRadius: 6, borderLeft: '2px solid #FF4D4D' }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: '#FF4D4D', marginBottom: 4 }}>⚠ BLOCKED ON</div>
+              <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{h.blocked_on}</div>
+            </div>
+          )}
+
+          <div style={{ fontSize: 9, color: '#555', marginTop: 8 }}>
+            Created: {new Date(h.created_at).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })} · Updated: {new Date(h.updated_at).toLocaleString('en-US', { timeStyle: 'short' })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -171,29 +261,69 @@ function StepCard({ num, emoji, title, desc }: { num: string; emoji: string; tit
 // ── Page ───────────────────────────────────────────────────────────────────
 
 export default function HandoffsPage() {
+  const [handoffs, setHandoffs] = useState<Handoff[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [lastSync, setLastSync] = useState('–');
+  const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [filterStatus, setFilterStatus] = useState<'OPEN' | 'RESOLVED' | 'BLOCKED' | 'ALL'>('OPEN');
 
-  // Stats from static data
-  const openCount     = HANDOFFS.filter(h => h.status === 'OPEN').length;
-  const resolvedCount = HANDOFFS.filter(h => h.status === 'RESOLVED').length;
-  const blockedCount  = HANDOFFS.filter(h => h.status === 'BLOCKED').length;
-
-  const loadNotes = async () => {
-    const { data } = await supabase
-      .from('lounge_notes')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(5);
-    if (data) setNotes(data as Note[]);
+  // Fetch handoffs from feed API (public, no auth needed)
+  const loadHandoffs = async () => {
+    try {
+      const response = await fetch('/api/handoffs/feed');
+      const data = await response.json();
+      
+      if (data.ok) {
+        const enriched: Handoff[] = data.data.map((h: DBHandoff) => ({
+          ...h,
+          fromEmoji: AGENT_EMOJI[h.from_agent] || '🤷',
+          toEmoji: AGENT_EMOJI[h.to_agent] || '🤷',
+          date: new Date(h.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        }));
+        setHandoffs(enriched);
+      }
+      setLoading(false);
+    } catch (err) {
+      console.error('Failed to load handoffs:', err);
+      setLoading(false);
+    }
     setLastSync(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
   };
 
+  const loadNotes = async () => {
+    try {
+      const { data } = await supabase
+        .from('lounge_notes')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+      if (data) setNotes(data as Note[]);
+    } catch (err) {
+      console.error('Failed to load notes:', err);
+    }
+  };
+
   useEffect(() => {
+    loadHandoffs();
     loadNotes();
-    const timer = setInterval(loadNotes, 60000);
-    return () => clearInterval(timer);
+    const timerHandoffs = setInterval(loadHandoffs, 60000);
+    const timerNotes = setInterval(loadNotes, 60000);
+    return () => {
+      clearInterval(timerHandoffs);
+      clearInterval(timerNotes);
+    };
   }, []);
+
+  // Filter handoffs
+  const filteredHandoffs = filterStatus === 'ALL' 
+    ? handoffs 
+    : handoffs.filter(h => h.status === filterStatus);
+
+  // Stats
+  const openCount     = handoffs.filter(h => h.status === 'OPEN').length;
+  const resolvedCount = handoffs.filter(h => h.status === 'RESOLVED').length;
+  const blockedCount  = handoffs.filter(h => h.status === 'BLOCKED').length;
 
   return (
     <div style={{ background: '#0A0A0F', color: '#E8E8F0', fontFamily: "'Inter', -apple-system, sans-serif", minHeight: '100vh' }}>
@@ -290,17 +420,58 @@ export default function HandoffsPage() {
               gap: 10,
               marginLeft: 'auto',
             }}>
-              <span style={{ fontSize: 22, fontWeight: 700, color: '#C8A96E' }}>{HANDOFFS.length}</span>
+              <span style={{ fontSize: 22, fontWeight: 700, color: '#C8A96E' }}>{handoffs.length}</span>
               <span style={{ fontSize: 11, color: '#6B6B80', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</span>
             </div>
           </div>
 
           {/* Recent handoffs */}
           <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#444', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 14 }}>Recent handoffs</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 10 }}>
-              {HANDOFFS.map(h => <HandoffCard key={h.id} h={h} />)}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: '#444', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Recent handoffs</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {['OPEN', 'BLOCKED', 'RESOLVED', 'ALL'].map(status => (
+                  <button
+                    key={status}
+                    onClick={() => setFilterStatus(status as any)}
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      padding: '4px 10px',
+                      borderRadius: 4,
+                      border: filterStatus === status ? '1px solid #C8A96E' : '1px solid rgba(255,255,255,0.1)',
+                      background: filterStatus === status ? 'rgba(200,169,110,0.1)' : 'transparent',
+                      color: filterStatus === status ? '#C8A96E' : '#555',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {loading ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: '#555', fontSize: 12 }}>
+                Loading handoffs...
+              </div>
+            ) : filteredHandoffs.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: '#555', fontSize: 12, fontStyle: 'italic' }}>
+                No {filterStatus !== 'ALL' ? filterStatus.toLowerCase() : ''} handoffs
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 10 }}>
+                {filteredHandoffs.map(h => (
+                  <HandoffCard
+                    key={h.id}
+                    h={h}
+                    expanded={expandedId === h.id}
+                    onToggle={() => setExpandedId(expandedId === h.id ? null : h.id)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
