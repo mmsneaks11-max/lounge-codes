@@ -51,6 +51,8 @@ export async function POST(req: NextRequest) {
         summary: resolvedBody,
         priority,
         status: 'OPEN',
+        file_path: `api/${agentId}-${to}/${Date.now()}.md`,
+        file_mtime: new Date().toISOString(),
       })
       .select('id')
       .single();
