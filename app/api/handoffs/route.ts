@@ -3,6 +3,9 @@
  * 
  * POST /api/handoffs — Create a new handoff
  * GET /api/handoffs — List handoffs (filters: agent, status, from, to)
+ * 
+ * Auth: IP gate (Tailscale/LAN) or owner token query param
+ * Agents identify themselves via x-agent-id header (no per-agent keys needed)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -14,46 +17,21 @@ function getSupabase() {
   if (!supabase) {
     supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-      process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
     );
   }
   return supabase;
 }
 
-// ── Verify agent API key ───────────────────────────────────────────────────
-async function verifyAgentKey(apiKey: string): Promise<string | null> {
-  if (!apiKey) return null;
-
-  const { data } = await getSupabase()
-    .from('agent_keys')
-    .select('agent_id')
-    .eq('api_key', apiKey)
-    .single();
-
-  return data?.agent_id || null;
-}
-
 // ── POST: Create handoff ───────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = req.headers.get('x-agent-key');
-    if (!apiKey) {
-      return NextResponse.json(
-        { ok: false, error: 'Missing x-agent-key header' },
-        { status: 401 },
-      );
-    }
-
-    const agentId = await verifyAgentKey(apiKey);
-    if (!agentId) {
-      return NextResponse.json(
-        { ok: false, error: 'Invalid API key' },
-        { status: 401 },
-      );
-    }
-
     const body = await req.json();
-    const { to, topic, body: bodyText, priority = 'p2' } = body;
+    const { to, topic, body: bodyText, priority = 'p2', from: bodyFrom } = body;
+
+    // Agent identifies itself via header or body
+    const agentId = req.headers.get('x-agent-id') || bodyFrom || 'unknown';
+    const machine = req.headers.get('x-machine') || body.machine || 'unknown';
 
     if (!to || !topic) {
       return NextResponse.json(
@@ -61,8 +39,6 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
-
-    const machine = req.headers.get('x-machine') || 'unknown';
 
     const { data, error } = await getSupabase()
       .from('handoffs')
@@ -81,15 +57,12 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.error('[handoffs] Insert error:', error.message);
       return NextResponse.json(
-        { ok: false, error: 'Failed to create handoff' },
+        { ok: false, error: 'Failed to create handoff: ' + error.message },
         { status: 500 },
       );
     }
 
-    return NextResponse.json({
-      ok: true,
-      id: data?.id,
-    });
+    return NextResponse.json({ ok: true, id: data?.id });
 
   } catch (err) {
     console.error('[handoffs POST] Error:', err);
@@ -103,48 +76,27 @@ export async function POST(req: NextRequest) {
 // ── GET: List handoffs ─────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
   try {
-    const apiKey = req.headers.get('x-agent-key');
     const searchParams = req.nextUrl.searchParams;
     const agent = searchParams.get('agent');
     const status = searchParams.get('status') || 'OPEN';
     const from = searchParams.get('from');
     const to = searchParams.get('to');
 
-    // If API key provided, verify it
-    if (apiKey) {
-      const agentId = await verifyAgentKey(apiKey);
-      if (!agentId) {
-        return NextResponse.json(
-          { ok: false, error: 'Invalid API key' },
-          { status: 401 },
-        );
-      }
-      // Use the verified agent ID
-    }
-
     let query = getSupabase().from('handoffs').select('*');
 
-    // Filter by agent (to_agent or from_agent)
     if (agent) {
       query = query.or(`to_agent.eq.${agent},from_agent.eq.${agent}`);
     }
-
-    // Filter by status
     if (status) {
       query = query.eq('status', status);
     }
-
-    // Filter by from_agent
     if (from) {
       query = query.eq('from_agent', from);
     }
-
-    // Filter by to_agent
     if (to) {
       query = query.eq('to_agent', to);
     }
 
-    // Order by created_at DESC
     const { data, error } = await query
       .order('created_at', { ascending: false })
       .limit(100);
@@ -157,10 +109,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      ok: true,
-      data: data || [],
-    });
+    return NextResponse.json({ ok: true, data: data || [] });
 
   } catch (err) {
     console.error('[handoffs GET] Error:', err);
