@@ -30,11 +30,26 @@ function getClientIp(req: NextRequest) {
   return ''
 }
 
+const OWNER_TOKEN = process.env.LOUNGE_OWNER_TOKEN
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const protectedPaths = ['/handoffs', '/ops', '/info', '/lounge', '/war-room', '/api/handoffs']
   const isProtected = protectedPaths.some(p => pathname === p || pathname.startsWith(p + '/'))
   if (!isProtected) return NextResponse.next()
+
+  // Owner token bypass — works from anywhere (query param or cookie)
+  if (OWNER_TOKEN) {
+    const tokenParam = req.nextUrl.searchParams.get('token')
+    const tokenCookie = req.cookies.get('lounge-token')?.value
+    if (tokenParam === OWNER_TOKEN || tokenCookie === OWNER_TOKEN) {
+      const res = NextResponse.next()
+      if (tokenParam === OWNER_TOKEN) {
+        res.cookies.set('lounge-token', OWNER_TOKEN, { maxAge: 60 * 60 * 24 * 30, path: '/' })
+      }
+      return res
+    }
+  }
 
   const ip = getClientIp(req)
   if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) return forbidden()
