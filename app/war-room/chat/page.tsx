@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import WarRoomNav from '../components/WarRoomNav';
 import './chat.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -152,6 +153,8 @@ export default function ChatWallPage() {
 
   return (
     <div className="chat-wall-container">
+      <WarRoomNav />
+
       {/* Scanline overlay */}
       <div className="scanlines" />
 

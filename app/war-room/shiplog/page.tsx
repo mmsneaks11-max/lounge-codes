@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import WarRoomNav from '../components/WarRoomNav';
 import './shiplog.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -308,6 +309,8 @@ export default function ShipLogPage() {
 
   return (
     <div className="shiplog-container">
+      <WarRoomNav />
+
       {/* Header Section */}
       <motion.div
         className="shiplog-header"

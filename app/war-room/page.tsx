@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import WarRoomNav from './components/WarRoomNav';
 import './war-room.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -338,6 +339,8 @@ export default function WarRoomPage() {
 
   return (
     <div className="war-room-container">
+      <WarRoomNav />
+
       {/* Background Particles */}
       <div className="particles-bg">
         {Array.from({ length: 12 }).map((_, i) => (

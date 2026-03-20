@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import WarRoomNav from '../components/WarRoomNav';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -299,6 +300,8 @@ export default function StatusPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 p-6">
+      <WarRoomNav />
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">

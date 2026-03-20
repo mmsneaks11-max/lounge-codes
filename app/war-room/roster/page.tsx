@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import WarRoomNav from '../components/WarRoomNav';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -437,6 +438,8 @@ export default function RosterPage() {
 
   return (
     <div className="roster-page">
+      <WarRoomNav />
+
       {/* Background Effects */}
       <div className="roster-bg-grid" />
       <div className="roster-bg-glow" />
