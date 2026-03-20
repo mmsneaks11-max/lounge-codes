@@ -27,7 +27,9 @@ function getSupabase() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { to, topic, body: bodyText, priority = 'p2', from: bodyFrom } = body;
+    const { to, topic, title, body: bodyText, summary, priority = 'p2', from: bodyFrom } = body;
+    const resolvedTopic = topic || title || 'Untitled';
+    const resolvedBody = bodyText || summary || '';
 
     // Agent identifies itself via header or body
     const agentId = req.headers.get('x-agent-id') || bodyFrom || 'unknown';
@@ -45,11 +47,10 @@ export async function POST(req: NextRequest) {
       .insert({
         from_agent: agentId,
         to_agent: to,
-        topic,
-        body: bodyText || '',
+        title: resolvedTopic,
+        summary: resolvedBody,
         priority,
         status: 'OPEN',
-        machine,
       })
       .select('id')
       .single();
