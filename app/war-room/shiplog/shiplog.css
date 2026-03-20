@@ -1,0 +1,62 @@
+/* Shiplog page styles */
+
+.shiplog-container {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.shiplog-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.shiplog-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.shiplog-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(200, 169, 110, 0.5) 0%, transparent 100%);
+}
+
+.shiplog-entry {
+  position: relative;
+  padding-bottom: 2rem;
+  border-left: 2px solid transparent;
+  padding-left: 1.5rem;
+  margin-left: -2rem;
+}
+
+.shiplog-entry::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.shiplog-entry:hover {
+  border-left-color: var(--gold);
+}
+
+.shiplog-timestamp {
+  font-family: var(--font-mono);
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.shiplog-description {
+  color: var(--text);
+  line-height: 1.6;
+}
