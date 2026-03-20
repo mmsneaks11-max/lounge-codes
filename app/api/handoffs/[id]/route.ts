@@ -5,16 +5,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+let supabase: any = null;
+
+function getSupabase() {
+  if (!supabase) {
+    supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+    );
+  }
+  return supabase;
+}
 
 // ── Verify agent API key ───────────────────────────────────────────────────
 async function verifyAgentKey(apiKey: string): Promise<string | null> {
   if (!apiKey) return null;
 
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from('agent_keys')
     .select('agent_id')
     .eq('api_key', apiKey)
@@ -25,8 +32,9 @@ async function verifyAgentKey(apiKey: string): Promise<string | null> {
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   try {
     const apiKey = req.headers.get('x-agent-key');
     if (!apiKey) {
@@ -79,7 +87,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('handoffs')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select('*')
       .single();
 

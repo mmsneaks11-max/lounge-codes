@@ -8,16 +8,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+let supabase: any = null;
+
+function getSupabase() {
+  if (!supabase) {
+    supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+    );
+  }
+  return supabase;
+}
 
 // ── Verify agent API key ───────────────────────────────────────────────────
 async function verifyAgentKey(apiKey: string): Promise<string | null> {
   if (!apiKey) return null;
 
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from('agent_keys')
     .select('agent_id')
     .eq('api_key', apiKey)
@@ -57,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     const machine = req.headers.get('x-machine') || 'unknown';
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('handoffs')
       .insert({
         from_agent: agentId,
@@ -115,7 +122,7 @@ export async function GET(req: NextRequest) {
       // Use the verified agent ID
     }
 
-    let query = supabase.from('handoffs').select('*');
+    let query = getSupabase().from('handoffs').select('*');
 
     // Filter by agent (to_agent or from_agent)
     if (agent) {

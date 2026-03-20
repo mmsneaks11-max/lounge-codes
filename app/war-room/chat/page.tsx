@@ -105,7 +105,7 @@ export default function ChatWallPage() {
         emoji: sampleMsg.emoji,
         agent: sampleMsg.agent,
         message: sampleMsg.message,
-        machine: sampleMsg.machine,
+        machine: sampleMsg.machine as 'Mac1' | 'Mac2' | 'PC1',
         displayedText: '',
         isComplete: false,
       });
