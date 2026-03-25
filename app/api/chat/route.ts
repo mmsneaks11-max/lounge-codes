@@ -26,9 +26,7 @@ const ROSTER = new Set([
   // PC1
   'main', 'ser-magnus', 'cleopatra', 'echo', 'dayta', 'spoke',
   'frankie', 'kit', 'remi', 'delia',
-  // JP squad (full + short aliases)
-  'johnphotography-marco', 'johnphotography-vale', 'johnphotography-reed',
-  'johnphotography-quinn', 'johnphotography-sol',
+  // JP squad (jp-* IDs, display names: Marco/Vale/Reed/Quinn/Sol)
   'jp-marco', 'jp-vale', 'jp-reed', 'jp-quinn', 'jp-sol',
   // Rinas Basement
   'sable', 'rex', 'crate',
