@@ -18,15 +18,19 @@ import { createClient } from '@supabase/supabase-js';
 // All agents across Mac1, Mac2, PC1
 const ROSTER = new Set([
   // Mac1
-  'clawd', 'chip', 'lila-nova', 'pixel', 'scout', 'indy', 'kay', 'sage', 'mint',
-  'oracle', 'coach', 'ripley', 'cairo', 'june', 'ozara',
+  'clawd', 'spark', 'bolt', 'chip', 'lila-nova', 'pixel', 'scout', 'indy',
+  'kay', 'sage', 'mint', 'oracle', 'coach', 'ripley', 'cairo', 'june', 'ozara',
+  'marcy', // also registered on Mac1 (Twilio SMS)
   // Mac2
   'electron', 'byte', 'perceptor', 'kronos', 'octo', 'jira',
   // PC1
-  'ser-magnus', 'cleopatra', 'echo', 'dayta', 'spoke',
-  'marcy', 'frankie', 'kit', 'remi', 'delia',
+  'main', 'ser-magnus', 'cleopatra', 'echo', 'dayta', 'spoke',
+  'frankie', 'kit', 'remi', 'delia',
+  // JP squad (full + short aliases)
   'johnphotography-marco', 'johnphotography-vale', 'johnphotography-reed',
   'johnphotography-quinn', 'johnphotography-sol',
+  'jp-marco', 'jp-vale', 'jp-reed', 'jp-quinn', 'jp-sol',
+  // Rinas Basement
   'sable', 'rex', 'crate',
 ]);
 
