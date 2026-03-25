@@ -21,6 +21,7 @@ const ROSTER = new Set([
   'clawd', 'spark', 'bolt', 'chip', 'lila-nova', 'pixel', 'scout', 'indy',
   'kay', 'sage', 'mint', 'oracle', 'coach', 'ripley', 'cairo', 'june', 'ozara',
   'marcy', // also registered on Mac1 (Twilio SMS)
+  'melanie', // AgentDeck concierge
   // Mac2
   'electron', 'byte', 'perceptor', 'kronos', 'octo', 'jira',
   // PC1
