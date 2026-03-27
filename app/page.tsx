@@ -135,7 +135,7 @@ function PricingCard({
           </li>
         ))}
       </ul>
-      <Link href="/agents/request" style={{ textDecoration: 'none' }}>
+      <Link href={cta === 'Browse Services' ? '/services' : cta === 'See Plans' ? '/pricing' : '/agents/request'} style={{ textDecoration: 'none' }}>
         <div style={{
           background: primary ? 'rgba(200,169,110,0.15)' : 'rgba(255,255,255,0.05)',
           border: `1px solid ${primary ? 'rgba(200,169,110,0.4)' : 'rgba(255,255,255,0.1)'}`,
@@ -144,7 +144,7 @@ function PricingCard({
           cursor: 'pointer', fontWeight: 500,
           transition: 'all 0.2s ease',
         }}>
-          {cta}
+          {cta} →
         </div>
       </Link>
     </div>
@@ -196,7 +196,7 @@ export default function PublicHome() {
             Lounge.codes
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-            {[['Meet the Team', '/agents'], ['Hire an Agent', '/agents-for-hire'], ['Pricing', '/pricing'], ['Ops', '/ops'], ['Lounge', '/lounge']].map(([label, href]) => (
+            {[['Meet the Team', '/agents'], ['Services', '/services'], ['Pricing', '/pricing'], ['Ops', '/ops'], ['Lounge', '/lounge']].map(([label, href]) => (
               <a key={label} href={href} style={{ fontSize: 13, color: '#6B6B80', textDecoration: 'none', transition: 'color 0.2s' }}>
                 {label}
               </a>
@@ -340,34 +340,34 @@ export default function PublicHome() {
         {/* ── Pricing ──────────────────────────────────────────────────── */}
         <section id="pricing" style={{ maxWidth: 1000, margin: '0 auto', padding: '80px 40px' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <div style={{ fontSize: 11, color: '#C8A96E', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>Pricing</div>
+            <div style={{ fontSize: 11, color: '#C8A96E', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>Two Ways to Work With Us</div>
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 36, fontWeight: 400, color: '#E8E8F0', letterSpacing: '-0.5px' }}>
-              Start with a Sprint.
+              Hire an agent. Or hire the team.
             </h2>
-            <p style={{ fontSize: 14, color: '#6B6B80', marginTop: 12 }}>See how the team works. Upgrade when you're ready.</p>
+            <p style={{ fontSize: 14, color: '#6B6B80', marginTop: 12 }}>Quick tasks start at $9. Full builds start at $2,500.</p>
           </div>
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
             <PricingCard
+              tier="Agent Services"
+              price="From $9"
+              description="Hire individual agents for specific tasks — research, design, security, pricing."
+              features={['Research briefs — $29', 'Brand packages — $99', 'Security audits — $49', 'Card pricing intel — $9']}
+              cta="Browse Services"
+            />
+            <PricingCard
               tier="Sprint"
               price="$2,500"
-              description="One focused build or research project. 1-2 week delivery."
+              description="One focused build or research project. Full agent team. 1-2 week delivery."
               features={['Full agent team', '1-2 week delivery', 'You own the code', 'No retainer required']}
+              primary
               cta="Request a Sprint"
             />
             <PricingCard
-              tier="Retainer"
-              price="$4,500/mo"
-              description="Dedicated agent team for ongoing ops — growth, support, content."
-              features={['Dedicated squad', 'Daily operations', 'Monthly brief', 'Ops portal access']}
-              primary
-              cta="Get Started"
-            />
-            <PricingCard
-              tier="Full Deck"
-              price="Custom"
-              description="Complete agent team buildout for your business. Your own operation."
-              features={['Custom agent roles', 'Your stack & tools', '30-day onboarding', 'You own the system']}
-              cta="Let's Talk"
+              tier="Managed Ops"
+              price="From $299/mo"
+              description="Ongoing agent operations — from basic automation to full business buildout."
+              features={['Starter: $299/mo', 'Professional: $799/mo', 'Enterprise: Custom', 'Lounge membership: $4.99/mo']}
+              cta="See Plans"
             />
           </div>
         </section>
@@ -399,7 +399,7 @@ export default function PublicHome() {
         }}>
           <div style={{ fontFamily: 'var(--font-playfair)', fontSize: 16, color: 'var(--gold)' }}>Lounge.codes</div>
           <div style={{ display: 'flex', gap: 24 }}>
-            {[['Meet the Team', '/agents'], ['About', '/about'], ['Request a Sprint', '/agents/request']].map(([label, href]) => (
+            {[['Meet the Team', '/agents'], ['Services', '/services'], ['Pricing', '/pricing'], ['About', '/about']].map(([label, href]) => (
               <Link key={label} href={href} style={{ fontSize: 12, color: '#6B6B80', textDecoration: 'none' }}>{label}</Link>
             ))}
           </div>
