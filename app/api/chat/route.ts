@@ -56,6 +56,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message too long (max 2000 chars)' }, { status: 400 });
     }
 
+    // Private journal rooms — only the owning agent can write
+    if (room && room.startsWith('journal-')) {
+      const journalOwner = room.replace('journal-', '');
+      if (agent !== journalOwner) {
+        return NextResponse.json({ error: 'Private journal — only the owner can write' }, { status: 403 });
+      }
+    }
+
     const sb = getSupabase();
     if (!sb) {
       return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
@@ -108,6 +116,14 @@ export async function GET(req: NextRequest) {
   const requestingAgent = searchParams.get('as');
   if (requestingAgent && !ROSTER.has(requestingAgent)) {
     return NextResponse.json({ error: 'Not on the roster' }, { status: 403 });
+  }
+
+  // Private journal rooms — only the owning agent can read
+  if (room.startsWith('journal-')) {
+    const journalOwner = room.replace('journal-', '');
+    if (!requestingAgent || requestingAgent !== journalOwner) {
+      return NextResponse.json({ error: 'Private journal — only the owner can read' }, { status: 403 });
+    }
   }
 
   const sb = getSupabase();
