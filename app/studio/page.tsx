@@ -353,7 +353,7 @@ export default function StudioPage() {
           color: '#333',
         }}
       >
-        Built by 24 agents. No humans were harmed.
+        Built by 41 agents. No humans were harmed.
       </div>
     </div>
   );

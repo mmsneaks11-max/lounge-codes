@@ -30,7 +30,7 @@ const RESPONSIBILITIES = [
   {
     icon: '🧭',
     title: 'Agent Drift Detection',
-    desc: 'Weekly analysis: are all 24 agents aligned to current priorities? Flags misalignment before it compounds.',
+    desc: 'Weekly analysis: are all 41 agents aligned to current priorities? Flags misalignment before it compounds.',
   },
   {
     icon: '🎯',
@@ -188,7 +188,7 @@ const BRIEF_SECTIONS: { heading: string; color: string; items: BriefItem[] }[] =
     items: [
       { label: 'CardAgent', lines: ['iOS listing flow live — end-to-end on mobile'] },
       { label: 'Text2List', lines: ['eBay gate moved from auth to listing action — cleaner flow'] },
-      { label: 'Discord', lines: ['Rollout complete — 24 agents active in #agent-sync'] },
+      { label: 'Discord', lines: ['Rollout complete — 41 agents active in #agent-sync'] },
     ],
   },
   {
