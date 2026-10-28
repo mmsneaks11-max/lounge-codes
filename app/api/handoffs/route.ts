@@ -26,7 +26,16 @@ function getSupabase() {
 // ── POST: Create handoff ───────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json() as {
+      to?: string;
+      topic?: string;
+      title?: string;
+      body?: string;
+      summary?: string;
+      priority?: string;
+      from?: string;
+      machine?: string;
+    };
     const { to, topic, title, body: bodyText, summary, priority = 'p2', from: bodyFrom } = body;
     const resolvedTopic = topic || title || 'Untitled';
     const resolvedBody = bodyText || summary || '';

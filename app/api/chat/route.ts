@@ -42,7 +42,12 @@ function getSupabase() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { agent, message, room, replyTo } = await req.json();
+    const { agent, message, room, replyTo } = await req.json() as {
+      agent?: string;
+      message?: string;
+      room?: string;
+      replyTo?: string | null;
+    };
 
     if (!agent || !message) {
       return NextResponse.json({ error: 'Missing agent or message' }, { status: 400 });

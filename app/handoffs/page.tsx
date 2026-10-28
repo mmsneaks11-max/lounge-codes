@@ -272,9 +272,9 @@ export default function HandoffsPage() {
   const loadHandoffs = async () => {
     try {
       const response = await fetch('/api/handoffs/feed');
-      const data = await response.json();
+      const data = await response.json() as { ok?: boolean; data?: DBHandoff[] };
       
-      if (data.ok) {
+      if (data.ok && data.data) {
         const enriched: Handoff[] = data.data.map((h: DBHandoff) => ({
           ...h,
           fromEmoji: AGENT_EMOJI[h.from_agent] || '🤷',

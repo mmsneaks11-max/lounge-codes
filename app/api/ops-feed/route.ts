@@ -91,7 +91,14 @@ export async function GET(request: NextRequest) {
 // POST /api/ops-feed — post a new entry
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json() as {
+      agent_id?: string;
+      type?: string;
+      severity?: string;
+      subject?: string;
+      detail?: string;
+      machine?: string;
+    };
     const { agent_id, type, severity, subject, detail, machine } = body;
 
     if (!agent_id || !ROSTER.has(agent_id)) {
@@ -131,7 +138,13 @@ export async function POST(request: NextRequest) {
 // PATCH /api/ops-feed — acknowledge or resolve
 export async function PATCH(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json() as {
+      id?: string;
+      status?: string;
+      acknowledged_by?: string;
+      resolved_by?: string;
+      resolved_note?: string;
+    };
     const { id, status, acknowledged_by, resolved_by, resolved_note } = body;
 
     if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 });

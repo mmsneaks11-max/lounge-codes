@@ -52,7 +52,11 @@ export async function PATCH(
       );
     }
 
-    const body = await req.json();
+    const body = await req.json() as {
+      status?: string;
+      resolution?: string;
+      blocked_on?: string;
+    };
     const { status, resolution, blocked_on } = body;
 
     if (!status) {

@@ -21,7 +21,13 @@ const VALID_URGENCIES = new Set(['low', 'normal', 'high', 'critical']);
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json() as {
+      agent_id?: string;
+      agent_slug?: string;
+      requester?: string;
+      request_text?: string;
+      urgency?: string;
+    };
     const { agent_id, agent_slug, requester, request_text, urgency } = body;
 
     // Basic validation
@@ -32,7 +38,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!VALID_URGENCIES.has(urgency)) {
+    if (!urgency || !VALID_URGENCIES.has(urgency)) {
       return NextResponse.json(
         { ok: false, error: 'Invalid urgency level.' },
         { status: 400 },
