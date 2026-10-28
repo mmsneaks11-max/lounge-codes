@@ -1,0 +1,23 @@
+import crypto from "node:crypto";
+import express from "express";
+import helmet from "helmet";
+import pg from "pg";
+import { Connector } from "@google-cloud/cloud-sql-connector";
+
+const READ = new Set(["agents","agent_activity","agent_presence","agent_requests","agent_status","agent_stories","booth_prompts","booth_responses","bulletins","daily_vibes","gallery_items","handoffs","listening_sessions","lounge_notes","lounge_posts","missions","mission_events","ops_feed","welcome_messages"]);
+const WRITE = new Set(["agent_presence","agent_requests","booth_responses","daily_vibes","listening_sessions","lounge_notes","lounge_posts","ops_feed"]);
+const IDENT = /^[a-z_][a-z0-9_]*$/;
+for (const name of ["INSTANCE_CONNECTION_NAME","DB_USER","DB_NAME","LOUNGE_API_KEY"]) if (!process.env[name]) throw new Error(`Missing ${name}`);
+const connector = new Connector();
+const options = await connector.getOptions({instanceConnectionName:process.env.INSTANCE_CONNECTION_NAME,ipType:"PUBLIC",authType:"IAM"});
+const pool = new pg.Pool({...options,user:process.env.DB_USER,database:process.env.DB_NAME,max:5});
+const app = express();
+app.disable("x-powered-by"); app.use(helmet()); app.use(express.json({limit:"256kb"}));
+const equal=(a,b)=>{a=Buffer.from(a||"");b=Buffer.from(b||"");return a.length===b.length&&crypto.timingSafeEqual(a,b)};
+app.get("/healthz",async(_q,r)=>{try{await pool.query("select 1");r.json({ok:true})}catch{r.status(503).json({ok:false})}});
+app.use("/v1",(q,r,n)=>equal(q.get("x-lounge-api-key"),process.env.LOUNGE_API_KEY)?n():r.status(401).json({error:"unauthorized"}));
+app.get("/v1/:table",async(q,r)=>{const t=q.params.table;if(!READ.has(t))return r.status(404).json({error:"unknown table"});try{const limit=Math.min(Math.max(Number(q.query.limit)||50,1),100);let select="*";if(q.query.select){const c=String(q.query.select).split(",");if(c.some(x=>!IDENT.test(x)))throw Error("invalid select");select=c.map(x=>`"${x}"`).join(",")}const vals=[],where=[];for(const[k,v]of Object.entries(q.query)){if(["select","limit","order","ascending"].includes(k))continue;if(!IDENT.test(k)||typeof v!=="string")throw Error("invalid filter");vals.push(v.startsWith("eq.")?v.slice(3):v);where.push(`"${k}" = $${vals.length}`)}let order="";if(q.query.order){if(!IDENT.test(String(q.query.order)))throw Error("invalid order");order=` order by "${q.query.order}" ${q.query.ascending==="true"?"asc":"desc"}`}const out=await pool.query(`select ${select} from public."${t}"${where.length?` where ${where.join(" and ")}`:""}${order} limit ${limit}`,vals);r.json(out.rows)}catch(e){r.status(400).json({error:e.message})}});
+app.post("/v1/:table",async(q,r)=>{const t=q.params.table;if(!WRITE.has(t))return r.status(403).json({error:"writes disabled"});try{const e=Object.entries(q.body||{});if(!e.length||e.some(([k])=>!IDENT.test(k)))throw Error("invalid body");const names=e.map(([k])=>`"${k}"`).join(","),p=e.map((_,i)=>`$${i+1}`).join(",");const out=await pool.query(`insert into public."${t}" (${names}) values (${p}) returning *`,e.map(([,v])=>v));r.status(201).json(out.rows[0])}catch(e){r.status(400).json({error:e.message})}});
+app.use((_q,r)=>r.status(404).json({error:"not found"}));
+const server=app.listen(Number(process.env.PORT)||8080);
+process.on("SIGTERM",()=>server.close(async()=>{await pool.end();connector.close();process.exit(0)}));
